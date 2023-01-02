@@ -10,4 +10,6 @@ interface AuthorServiceInterface
     public function authors(): Collection;
 
     public function create(array $data): Model;
+
+    public function show(int $author): Model;
 }

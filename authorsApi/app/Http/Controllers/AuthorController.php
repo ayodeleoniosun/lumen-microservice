@@ -31,7 +31,6 @@ class AuthorController extends Controller
     public function index(): JsonResponse
     {
         $response = $this->authorService->authors();
-
         return $this->success($response);
     }
 
@@ -43,7 +42,6 @@ class AuthorController extends Controller
     public function store(CreateAuthorRequest $request): JsonResponse
     {
         $response = $this->authorService->create($request->all());
-
         return $this->success($response, 'Author successfully added', Response::HTTP_CREATED);
     }
 
@@ -54,7 +52,9 @@ class AuthorController extends Controller
      */
     public function show($author): JsonResponse
     {
-        return $this->success([]);
+        $response = $this->authorService->show($author);
+
+        return $this->success($response);
     }
 
     /**
