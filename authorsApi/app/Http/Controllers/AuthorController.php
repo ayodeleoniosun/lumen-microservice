@@ -3,15 +3,17 @@
 namespace App\Http\Controllers;
 
 use App\Contracts\AuthorServiceInterface;
+use App\Http\Requests\CreateAuthorRequest;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Http\Response;
 
 class AuthorController extends Controller
 {
     use ApiResponseTrait;
 
-    public AuthorServiceInterface $authorService;
+    protected AuthorServiceInterface $authorService;
 
     /**
      * @param AuthorServiceInterface $authorService
@@ -21,7 +23,7 @@ class AuthorController extends Controller
         $this->authorService = $authorService;
     }
 
-    /**
+   /**
      * Return list of authors
      *
      * @return JsonResponse
@@ -38,9 +40,11 @@ class AuthorController extends Controller
      *
      * @return JsonResponse
      */
-    public function store(Request $request): JsonResponse
+    public function store(CreateAuthorRequest $request): JsonResponse
     {
-        return $this->success([]);
+        $response = $this->authorService->create($request->all());
+
+        return $this->success($response, 'Author successfully added', Response::HTTP_CREATED);
     }
 
     /**
