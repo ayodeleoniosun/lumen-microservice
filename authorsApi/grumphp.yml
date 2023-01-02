@@ -1,0 +1,49 @@
+grumphp:
+  stop_on_failure: false
+  ignore_unstaged_changes: false
+  hide_circumvention_tip: false
+  process_timeout: 5000
+  ascii: ~
+  tasks:
+    #composer: ~
+    file_size: ~
+    git_blacklist:
+      keywords:
+        - "die("
+        - "var_dump("
+        - "print_r("
+        - "exit;"
+      whitelist_patterns:
+        - /^app\/(.*)/
+      regexp_type: G
+    phpcpd:
+      directory:
+        - './app/'
+      fuzzy: false
+      min_lines: 5
+      min_tokens: 70
+      triggered_by: [ 'php' ]
+    psalm:
+      threads: 2
+    phpcs:
+      whitelist_patterns:
+        - /^app\/(.*)/
+      ignore_patterns:
+        - "*/tests/*"
+        - "*/node_modules/*"
+        - "*.js"
+        - "*.css"
+    phpmd:
+      ruleset: [ 'phpmd.xml' ]
+      exclude:
+        - "vendor"
+        - "migrations"
+        - "tests"
+        - "_ide_helper.php"
+        - "_ide_helper_models.php"
+    securitychecker_enlightn:
+      run_always: true
+    phpversion:
+      project: '8.1'
+  testsuites: [ ]
+  extensions: [ ]
