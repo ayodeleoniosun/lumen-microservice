@@ -7,7 +7,6 @@ use App\Http\Requests\CreateAuthorRequest;
 use App\Http\Requests\UpdateAuthorRequest;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class AuthorController extends Controller
