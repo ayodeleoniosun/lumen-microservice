@@ -2,7 +2,7 @@
 
 namespace Database\Seeders;
 
-use App\Models\Author;
+use App\Models\Book;
 use Illuminate\Database\Seeder;
 
 class DatabaseSeeder extends Seeder
@@ -14,6 +14,6 @@ class DatabaseSeeder extends Seeder
      */
     public function run()
     {
-        Author::factory()->count(50)->create();
+        Book::factory()->count(50)->create();
     }
 }
