@@ -71,4 +71,22 @@ class AuthorService implements AuthorServiceInterface
             }
         }
     }
+
+    /**
+     *  Show author details
+     * @throws CustomException
+     * @return void
+     */
+    public function delete(int $id): void
+    {
+        try {
+            $author = Author::findOrFail($id);
+
+            $author->delete();
+        } catch (\Exception $e) {
+            if ($e instanceof  ModelNotFoundException) {
+                throw new CustomException('Author not found', Response::HTTP_NOT_FOUND);
+            }
+        }
+    }
 }

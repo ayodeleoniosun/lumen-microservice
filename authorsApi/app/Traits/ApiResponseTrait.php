@@ -16,6 +16,11 @@ trait ApiResponseTrait
         ], $statusCode);
     }
 
+    public function deleted(int $statusCode = Response::HTTP_NO_CONTENT)
+    {
+        return FacadeResponse::json([], $statusCode);
+    }
+
     public function error(string $message, int $statusCode = Response::HTTP_BAD_REQUEST)
     {
         return FacadeResponse::json([

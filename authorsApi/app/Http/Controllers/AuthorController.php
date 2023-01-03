@@ -79,6 +79,8 @@ class AuthorController extends Controller
      */
     public function destroy($author): JsonResponse
     {
-        return $this->success([]);
+        $this->authorService->delete($author);
+
+        return $this->deleted();
     }
 }

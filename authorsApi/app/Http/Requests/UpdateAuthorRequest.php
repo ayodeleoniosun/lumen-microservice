@@ -28,8 +28,7 @@ class UpdateAuthorRequest extends FormRequest
             'firstname' => 'required|string',
             'lastname' => 'required|string',
             'gender' => 'required|string|in:male,female',
-            'country' => 'required|string'
+            'country' => 'required|string',
         ];
     }
 }
-
