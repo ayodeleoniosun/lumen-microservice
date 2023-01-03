@@ -49,7 +49,7 @@ class AuthorService implements AuthorServiceInterface
     }
 
     /**
-     *  Show author details
+     *  Update author details
      * @throws CustomException
      * @return void
      */
@@ -73,7 +73,7 @@ class AuthorService implements AuthorServiceInterface
     }
 
     /**
-     *  Show author details
+     *  Remove author details
      * @throws CustomException
      * @return void
      */
