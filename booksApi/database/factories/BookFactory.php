@@ -22,9 +22,9 @@ class BookFactory extends Factory
     public function definition()
     {
         return [
-            'author_id' => $this->faker->randomDigitNotNull(),
-            'title' => $this->faker->title,
-            'description' => $this->faker->text,
+            'author_id' => $this->faker->numberBetween(1,50),
+            'title' => $this->faker->sentence(3, true),
+            'description' => $this->faker->sentence(6, true),
             'pages' => $this->faker->randomNumber(2),
             'isbn' => $this->faker->isbn10(),
             'price' => $this->faker->randomNumber(5),

@@ -2,8 +2,11 @@
 
 namespace App\Exceptions;
 
+use App\Traits\ApiResponseTrait;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Http\Response;
 use Illuminate\Validation\ValidationException;
 use Laravel\Lumen\Exceptions\Handler as ExceptionHandler;
 use Symfony\Component\HttpKernel\Exception\HttpException;
@@ -11,6 +14,8 @@ use Throwable;
 
 class Handler extends ExceptionHandler
 {
+    use ApiResponseTrait;
+
     /**
      * A list of the exception types that should not be reported.
      *
@@ -49,6 +54,39 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception)
     {
-        return parent::render($request, $exception);
+        if ($exception instanceof HttpException) {
+            $code = $exception->getStatusCode();
+            $message = Response::$statusTexts[$code];
+
+            return $this->error($message, $code);
+        }
+
+        if ($exception instanceof ModelNotFoundException) {
+            $model = ucfirst(class_basename($exception->getModel()));
+
+            return $this->error($model . ' not found', Response::HTTP_NOT_FOUND);
+        }
+
+        if ($exception instanceof AuthorizationException) {
+            return $this->error($exception->getMessage(), Response::HTTP_FORBIDDEN);
+        }
+
+        if ($exception instanceof AuthenticationException) {
+            return $this->error($exception->getMessage(), Response::HTTP_UNAUTHORIZED);
+        }
+
+        if ($exception instanceof ValidationException) {
+            return $this->error($exception->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
+        if ($exception instanceof BookExistException) {
+            return $this->error('You have added this book before.', Response::HTTP_BAD_REQUEST);
+        }
+
+        if (env('APP_DEBUG')) {
+            return parent::render($request, $exception);
+        }
+
+        return $this->error("Something went wrong. Try again later.", Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 }

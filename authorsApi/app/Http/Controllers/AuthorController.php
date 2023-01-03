@@ -66,7 +66,7 @@ class AuthorController extends Controller
      */
     public function update(UpdateAuthorRequest $request, $author): JsonResponse
     {
-        $response = $this->authorService->update($request->all(), $author);
+        $response = $this->authorService->update($request->validated(), $author);
 
         return $this->success($response, 'Author successfully updated');
     }

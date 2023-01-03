@@ -40,7 +40,7 @@ class AuthorService implements AuthorServiceInterface
 
     /**
      *  Update author details
-     * @return void
+     * @return Model
      */
     public function update(array $data, int $id): Model
     {
