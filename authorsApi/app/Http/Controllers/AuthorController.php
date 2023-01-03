@@ -30,7 +30,7 @@ class AuthorController extends Controller
      */
     public function index(): JsonResponse
     {
-        $response = $this->authorService->authors();
+        $response = $this->authorService->index();
 
         return $this->success($response);
     }
@@ -42,7 +42,7 @@ class AuthorController extends Controller
      */
     public function store(CreateAuthorRequest $request): JsonResponse
     {
-        $response = $this->authorService->create($request->all());
+        $response = $this->authorService->create($request->validated());
 
         return $this->success($response, 'Author successfully added', Response::HTTP_CREATED);
     }

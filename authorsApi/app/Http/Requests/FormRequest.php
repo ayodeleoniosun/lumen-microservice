@@ -16,14 +16,12 @@ class FormRequest
     {
         $this->request = $request;
 
-        $this->prepareForValidation();
-
         if (!$this->authorize()) throw new UnauthorizedException;
 
         $this->validate($this->request, $this->rules(), $messages, $customAttributes);
     }
 
-    public function all()
+    public function validated()
     {
         return $this->request->all();
     }
@@ -31,11 +29,6 @@ class FormRequest
     public function get(string $key, $default = null)
     {
         return $this->request->get($key, $default);
-    }
-
-    protected function prepareForValidation()
-    {
-        //
     }
 
     protected function authorize()

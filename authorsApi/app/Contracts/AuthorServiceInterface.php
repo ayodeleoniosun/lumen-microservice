@@ -7,7 +7,7 @@ use Illuminate\Database\Eloquent\Model;
 
 interface AuthorServiceInterface
 {
-    public function authors(): Collection;
+    public function index(): Collection;
 
     public function create(array $data): Model;
 

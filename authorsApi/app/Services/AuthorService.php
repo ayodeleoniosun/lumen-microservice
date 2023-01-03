@@ -14,7 +14,7 @@ class AuthorService implements AuthorServiceInterface
      *
      * @return Collection
      */
-    public function authors(): Collection
+    public function index(): Collection
     {
         return Author::all();
     }

@@ -75,6 +75,10 @@ class Handler extends ExceptionHandler
             return $this->error($exception->getMessage(), Response::HTTP_UNAUTHORIZED);
         }
 
+        if ($exception instanceof ValidationException) {
+            return $this->error($exception->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
+
         if (env('APP_DEBUG')) {
             return parent::render($request, $exception);
         }
