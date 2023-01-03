@@ -47,4 +47,28 @@ class AuthorService implements AuthorServiceInterface
             }
         }
     }
+
+    /**
+     *  Show author details
+     * @throws CustomException
+     * @return void
+     */
+    public function update(array $data, int $id): Model
+    {
+        try {
+            $author = Author::findOrFail($id);
+
+            $author->firstname = $data['firstname'];
+            $author->lastname = $data['lastname'];
+            $author->gender = $data['gender'];
+            $author->country = $data['country'];
+            $author->save();
+
+            return $author;
+        } catch (\Exception $e) {
+            if ($e instanceof  ModelNotFoundException) {
+                throw new CustomException('Author not found', Response::HTTP_NOT_FOUND);
+            }
+        }
+    }
 }

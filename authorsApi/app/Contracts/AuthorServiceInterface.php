@@ -12,4 +12,6 @@ interface AuthorServiceInterface
     public function create(array $data): Model;
 
     public function show(int $author): Model;
+
+    public function update(array $data, int $id): Model;
 }
