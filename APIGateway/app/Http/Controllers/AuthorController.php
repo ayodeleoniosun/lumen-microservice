@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Contracts\AuthorServiceInterface;
 use App\Traits\ApiResponseTrait;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Laravel\Lumen\Http\ResponseFactory;
@@ -35,19 +36,20 @@ class AuthorController extends Controller
     /**
      * Create new author
      *
+     * @param Request $request
      * @return Response|ResponseFactory
      */
     public function store(Request $request): Response|ResponseFactory
     {
         return $this->success(
-            $this->authorService->create($request->all()),
-            Response::HTTP_CREATED
+            $this->authorService->create($request->all())
         );
     }
 
     /**
      * get and show details of existing author
      *
+     * @param $author
      * @return Response|ResponseFactory
      */
     public function show($author): Response|ResponseFactory
@@ -58,6 +60,8 @@ class AuthorController extends Controller
     /**
      * Update an existing author
      *
+     * @param Request $request
+     * @param $author
      * @return Response|ResponseFactory
      */
     public function update(Request $request, $author): Response|ResponseFactory
@@ -68,9 +72,10 @@ class AuthorController extends Controller
     /**
      * Remove an existing author
      *
-     * @return \Illuminate\Http\JsonResponse
+     * @param $author
+     * @return JsonResponse
      */
-    public function destroy($author): \Illuminate\Http\JsonResponse
+    public function destroy($author): JsonResponse
     {
         $this->authorService->delete($author);
 

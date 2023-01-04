@@ -33,18 +33,27 @@ class AuthorService implements AuthorServiceInterface
         return $this->sendRequest('POST', '/authors', $data);
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function show(int $author): string
     {
-        return $this->sendRequest('GET', '/authors/' . $author);
+        return $this->sendRequest('GET', "/authors/{$author}");
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function update(array $data, int $id): string
     {
-        return $this->sendRequest('PUT', '/authors/' . $id, $data);
+        return $this->sendRequest('PUT', "/authors/{$id}", $data);
     }
 
+    /**
+     * @throws GuzzleException
+     */
     public function delete(int $id): void
     {
-        $this->sendRequest('DELETE', '/authors/' . $id);
+        $this->sendRequest('DELETE', "/authors/{$id}");
     }
 }
