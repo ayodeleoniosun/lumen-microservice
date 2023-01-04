@@ -27,4 +27,9 @@ trait ApiResponseTrait
             'message' => $message,
         ], $statusCode);
     }
+
+    public function errorMessage($data, int $statusCode = ResponseAlias::HTTP_BAD_REQUEST): JsonResponse
+    {
+        return FacadeResponse::json($data, $statusCode);
+    }
 }

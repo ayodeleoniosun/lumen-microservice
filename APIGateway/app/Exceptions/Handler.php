@@ -4,8 +4,9 @@ namespace App\Exceptions;
 
 use App\Traits\ApiResponseTrait;
 use Exception;
-use GuzzleHttp\Exception\GuzzleException;
+use GuzzleHttp\Exception\ClientException;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -57,10 +58,32 @@ class Handler extends ExceptionHandler
      */
     public function render($request, Throwable $exception): Response|JsonResponse
     {
-        if ($exception instanceof GuzzleException) {
-            return $this->error($exception->getMessage(), $exception->getCode());
+        if ($exception instanceof HttpException) {
+            $code = $exception->getStatusCode();
+            $message = Response::$statusTexts[$code];
+
+            return $this->error($message, $code);
         }
 
-        return parent::render($request, $exception);
+        if ($exception instanceof AuthorizationException) {
+            return $this->error($exception->getMessage(), Response::HTTP_FORBIDDEN);
+        }
+
+        if ($exception instanceof AuthenticationException) {
+            return $this->error($exception->getMessage(), Response::HTTP_UNAUTHORIZED);
+        }
+
+        if ($exception instanceof ClientException) {
+            $response = json_decode($exception->getResponse()->getBody());
+            $code = $exception->getCode();
+
+            return $this->errorMessage($response, $code);
+        }
+
+        if (env('APP_DEBUG')) {
+            return parent::render($request, $exception);
+        }
+
+        return $this->error("Something went wrong. Try again later.", Response::HTTP_INTERNAL_SERVER_ERROR);
     }
 }
