@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Contracts\AuthorServiceInterface;
 use App\Contracts\BookServiceInterface;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
@@ -15,12 +16,16 @@ class BookController extends Controller
 
     public BookServiceInterface $bookService;
 
+    public AuthorServiceInterface $authorService;
+
     /**
      * @param BookServiceInterface $bookService
+     * @param AuthorServiceInterface $authorService
      */
-    public function __construct(BookServiceInterface $bookService)
+    public function __construct(BookServiceInterface $bookService, AuthorServiceInterface $authorService)
     {
         $this->bookService = $bookService;
+        $this->authorService = $authorService;
     }
 
     /**
@@ -41,6 +46,8 @@ class BookController extends Controller
      */
     public function store(Request $request): Response|ResponseFactory
     {
+        $this->authorService->show($request->author_id);
+
         return $this->success(
             $this->bookService->create($request->all())
         );
@@ -66,6 +73,8 @@ class BookController extends Controller
      */
     public function update(Request $request, $book): Response|ResponseFactory
     {
+        $this->authorService->show($request->author_id);
+
         return $this->success($this->bookService->update($request->all(), $book));
     }
 
