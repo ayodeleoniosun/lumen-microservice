@@ -13,8 +13,10 @@
 |
 */
 
-$router->get('/', 'UserController@index');
-$router->post('/', 'UserController@store');
-$router->get('/{user}', 'UserController@show');
-$router->put('/{user}', 'UserController@update');
-$router->delete('/{user}', 'UserController@destroy');
+$router->group(['prefix' => 'users'], function () use ($router) {
+    $router->get('/', 'UserController@index');
+    $router->post('/', 'UserController@store');
+    $router->get('/{user}', 'UserController@show');
+    $router->put('/{user}', 'UserController@update');
+    $router->delete('/{user}', 'UserController@destroy');
+});

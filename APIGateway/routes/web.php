@@ -1,6 +1,6 @@
 <?php
 
-/** @var \Laravel\Lumen\Routing\Router $router */
+/** @var Router $router */
 
 /*
 |--------------------------------------------------------------------------
@@ -13,18 +13,30 @@
 |
 */
 
-$router->group(['prefix' => 'authors'], function () use ($router) {
-    $router->get('/', 'AuthorController@index');
-    $router->post('/', 'AuthorController@store');
-    $router->get('/{author}', 'AuthorController@show');
-    $router->put('/{author}', 'AuthorController@update');
-    $router->delete('/{author}', 'AuthorController@destroy');
-});
+use Laravel\Lumen\Routing\Router;
 
-$router->group(['prefix' => 'books'], function () use ($router) {
-    $router->get('/', 'BookController@index');
-    $router->post('/', 'BookController@store');
-    $router->get('/{book}', 'BookController@show');
-    $router->put('/{book}', 'BookController@update');
-    $router->delete('/{book}', 'BookController@destroy');
+$router->group(['middleware' => 'client.credentials'], function () use ($router) {
+    $router->group(['prefix' => 'users'], function () use ($router) {
+        $router->get('/', 'UserController@index');
+        $router->post('/', 'UserController@store');
+        $router->get('/{user}', 'UserController@show');
+        $router->put('/{user}', 'UserController@update');
+        $router->delete('/{user}', 'UserController@destroy');
+    });
+
+    $router->group(['prefix' => 'authors'], function () use ($router) {
+        $router->get('/', 'AuthorController@index');
+        $router->post('/', 'AuthorController@store');
+        $router->get('/{author}', 'AuthorController@show');
+        $router->put('/{author}', 'AuthorController@update');
+        $router->delete('/{author}', 'AuthorController@destroy');
+    });
+
+    $router->group(['prefix' => 'books'], function () use ($router) {
+        $router->get('/', 'BookController@index');
+        $router->post('/', 'BookController@store');
+        $router->get('/{book}', 'BookController@show');
+        $router->put('/{book}', 'BookController@update');
+        $router->delete('/{book}', 'BookController@destroy');
+    });
 });

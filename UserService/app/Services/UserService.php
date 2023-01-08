@@ -30,6 +30,7 @@ class UserService implements UserServiceInterface
     {
         $data['password'] = Hash::make($data['password']);
         $data['email_verified_at'] = Carbon::now()->toDateTimeString();
+
         return User::create($data);
     }
 
