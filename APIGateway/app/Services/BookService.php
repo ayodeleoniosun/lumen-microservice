@@ -10,11 +10,14 @@ class BookService implements BookServiceInterface
 {
     use ConsumeExternalServiceTrait;
 
-    public string $baseUrl;
+    private string $baseUrl;
+
+    private string $secret;
 
     public function __construct()
     {
         $this->baseUrl = config('services.books.base_url');
+        $this->secret = config('services.books.secret');
     }
 
     /**

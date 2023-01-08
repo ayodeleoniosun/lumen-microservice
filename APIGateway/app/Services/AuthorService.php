@@ -10,14 +10,19 @@ class AuthorService implements AuthorServiceInterface
 {
     use ConsumeExternalServiceTrait;
 
-    public string $baseUrl;
+    private string $baseUrl;
+
+    private string $secret;
 
     public function __construct()
     {
         $this->baseUrl = config('services.authors.base_url');
+        $this->secret = config('services.authors.secret');
     }
 
+
     /**
+     * @return string
      * @throws GuzzleException
      */
     public function index(): string
@@ -26,6 +31,7 @@ class AuthorService implements AuthorServiceInterface
     }
 
     /**
+     * @return string
      * @throws GuzzleException
      */
     public function create(array $data): string
@@ -34,6 +40,7 @@ class AuthorService implements AuthorServiceInterface
     }
 
     /**
+     * @return string
      * @throws GuzzleException
      */
     public function show(int $author): string
@@ -42,6 +49,7 @@ class AuthorService implements AuthorServiceInterface
     }
 
     /**
+     * @return string
      * @throws GuzzleException
      */
     public function update(array $data, int $id): string
@@ -50,6 +58,7 @@ class AuthorService implements AuthorServiceInterface
     }
 
     /**
+     * @return void
      * @throws GuzzleException
      */
     public function delete(int $id): void

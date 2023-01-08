@@ -72,8 +72,8 @@ $app->configure('app');
 |
 */
 
-// $app->middleware([
-//     App\Http\Middleware\ExampleMiddleware::class
+//$app->middleware([
+//     App\Http\Middleware\AuthenticateAccess::class,
 // ]);
 
 // $app->routeMiddleware([
@@ -91,10 +91,10 @@ $app->configure('app');
 |
 */
 
-$app->register(App\Providers\AppServiceProvider::class);
-$app->register(App\Providers\AuthServiceProvider::class);
-$app->register(App\Providers\EventServiceProvider::class);
-$app->register(App\Providers\AuthorServiceProvider::class);
+ $app->register(App\Providers\AppServiceProvider::class);
+ $app->register(App\Providers\AuthServiceProvider::class);
+ $app->register(App\Providers\EventServiceProvider::class);
+ $app->register(App\Providers\AuthorServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------
@@ -109,8 +109,8 @@ $app->register(App\Providers\AuthorServiceProvider::class);
 
 $app->router->group([
     'namespace' => 'App\Http\Controllers',
-], function ($router) {
+ ], function ($router) {
     require __DIR__ . '/../routes/web.php';
-});
+ });
 
-return $app;
+ return $app;

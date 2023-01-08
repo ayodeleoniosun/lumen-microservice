@@ -10,8 +10,10 @@
     "type": "project",
     "require": {
         "php": "^8.0",
+        "dusterio/lumen-passport": "^0.3.6",
+        "guzzlehttp/guzzle": "^7.4",
         "laravel/lumen-framework": "^9.0",
-        "guzzlehttp/guzzle": "^7.4"
+        "laravel/passport": "^10.4"
     },
     "require-dev": {
         "fakerphp/faker": "^1.9.1",
