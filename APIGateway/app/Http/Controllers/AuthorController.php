@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Contracts\AuthorServiceInterface;
+use App\Contracts\UserServiceInterface;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -15,12 +16,16 @@ class AuthorController extends Controller
 
     public AuthorServiceInterface $authorService;
 
+    public UserServiceInterface $userService;
+
     /**
      * @param AuthorServiceInterface $authorService
+     * @param UserServiceInterface $userService
      */
-    public function __construct(AuthorServiceInterface $authorService)
+    public function __construct(AuthorServiceInterface $authorService, UserServiceInterface $userService)
     {
         $this->authorService = $authorService;
+        $this->userService = $userService;
     }
 
     /**
@@ -41,6 +46,8 @@ class AuthorController extends Controller
      */
     public function store(Request $request): Response|ResponseFactory
     {
+        $this->userService->show($request->user_id);
+        
         return $this->success(
             $this->authorService->create($request->all())
         );

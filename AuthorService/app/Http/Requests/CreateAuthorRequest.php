@@ -22,11 +22,21 @@ class CreateAuthorRequest extends FormRequest
     public function rules()
     {
         return [
-            'firstname' => 'required|string',
-            'lastname' => 'required|string',
-            'gender' => 'required|string|in:male,female',
-            'email' => 'required|email|unique:authors',
-            'country' => 'required|string'
+            'user_id' => 'required|integer|unique:App\Models\Author,user_id',
+            'bio' => 'required|string',
+            'url' => 'required|string|url',
+        ];
+    }
+
+    /**
+     * Get the validation rules that apply to the request.
+     *
+     * @return array
+     */
+    public function messages()
+    {
+        return [
+            'user_id.unique' => 'This user already exist as an author',
         ];
     }
 }

@@ -25,10 +25,8 @@ class UpdateAuthorRequest extends FormRequest
     public function rules()
     {
         return [
-            'firstname' => 'required|string',
-            'lastname' => 'required|string',
-            'gender' => 'required|string|in:male,female',
-            'country' => 'required|string',
+            'bio' => 'required|string',
+            'url' => 'required|string|url',
         ];
     }
 }

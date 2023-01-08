@@ -46,10 +46,8 @@ class AuthorService implements AuthorServiceInterface
     {
         $author = Author::findOrFail($id);
 
-        $author->firstname = $data['firstname'];
-        $author->lastname = $data['lastname'];
-        $author->gender = $data['gender'];
-        $author->country = $data['country'];
+        $author->bio = $data['bio'];
+        $author->url = $data['url'];
         $author->save();
 
         return $author;

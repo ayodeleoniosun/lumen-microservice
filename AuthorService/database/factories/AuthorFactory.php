@@ -22,11 +22,9 @@ class AuthorFactory extends Factory
     public function definition()
     {
         return [
-            'firstname' => $this->faker->firstName,
-            'lastname' => $this->faker->lastName,
-            'gender' => $this->faker->randomElement(['male', 'female']),
-            'email' => $this->faker->unique()->safeEmail,
-            'country' => $this->faker->country,
+            'user_id' => $this->faker->numberBetween(1,50),
+            'bio' => $this->faker->sentence(6, true),
+            'url' => $this->faker->url(),
         ];
     }
 }

@@ -12,7 +12,7 @@ class FormRequest
 
     public Request $request;
 
-    public function __construct(Request $request, array $messages = [], array $customAttributes = [])
+    public function __construct(Request $request, array $customAttributes = [])
     {
         $this->request = $request;
 
@@ -20,7 +20,7 @@ class FormRequest
             throw new UnauthorizedException();
         }
 
-        $this->validate($this->request, $this->rules(), $messages, $customAttributes);
+        $this->validate($this->request, $this->rules(), $this->messages(), $customAttributes);
     }
 
     public function validated()
@@ -39,6 +39,11 @@ class FormRequest
     }
 
     protected function rules()
+    {
+        return [];
+    }
+
+    protected function messages()
     {
         return [];
     }
