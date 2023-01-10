@@ -2,7 +2,7 @@
 
 namespace App\Http\Requests;
 
-class BookRequest extends FormRequest
+class CommentRequest extends FormRequest
 {
     /**
      * Determine if the user is authorized to make this request.
@@ -22,12 +22,9 @@ class BookRequest extends FormRequest
     public function rules()
     {
         return [
-            'author_id' => 'required|integer',
-            'title' => 'required|string',
-            'description' => 'required|string',
-            'pages' => 'required|integer',
-            'isbn' => 'required|string',
-            'price' => 'required|integer'
+            'user_id' => 'required|integer',
+            'post_id' => 'sometimes|integer',
+            'comment' => 'required|string',
         ];
     }
 }

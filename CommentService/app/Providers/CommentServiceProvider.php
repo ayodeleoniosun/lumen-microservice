@@ -2,11 +2,11 @@
 
 namespace App\Providers;
 
-use App\Contracts\BookServiceInterface;
-use App\Services\BookService;
+use App\Contracts\CommentServiceInterface;
+use App\Services\CommentService;
 use Illuminate\Support\ServiceProvider;
 
-class BookServiceProvider extends ServiceProvider
+class CommentServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
@@ -16,8 +16,8 @@ class BookServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(
-            BookServiceInterface::class,
-            BookService::class
+            CommentServiceInterface::class,
+            CommentService::class
         );
     }
 

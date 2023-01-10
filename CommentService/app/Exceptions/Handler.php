@@ -79,8 +79,10 @@ class Handler extends ExceptionHandler
             return $this->error($exception->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        if ($exception instanceof BookExistException) {
-            return $this->error('You have added this book before.', Response::HTTP_BAD_REQUEST);
+        //custom exceptions
+
+        if ($exception instanceof UserAlreadyLikedCommentException) {
+            return $this->error('You have already liked this comment.', Response::HTTP_BAD_REQUEST);
         }
 
         if (env('APP_DEBUG')) {

@@ -13,10 +13,12 @@
 |
 */
 
-$router->group(['prefix' => 'books'], function () use ($router) {
-    $router->get('/', 'BookController@index');
-    $router->post('/', 'BookController@store');
-    $router->get('/{book}', 'BookController@show');
-    $router->put('/{book}', 'BookController@update');
-    $router->delete('/{book}', 'BookController@destroy');
+$router->group(['prefix' => 'comments'], function () use ($router) {
+    $router->get('/', 'CommentController@index');
+    $router->post('/', 'CommentController@store');
+    $router->get('/{comment}', 'CommentController@show');
+    $router->put('/{comment}', 'CommentController@update');
+    $router->delete('/{comment}', 'CommentController@destroy');
+
+    $router->post('/like/{comment}', 'CommentController@like');
 });

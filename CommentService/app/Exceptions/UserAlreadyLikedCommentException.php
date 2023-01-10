@@ -4,7 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 
-class BookExistException extends Exception
+class UserAlreadyLikedCommentException extends Exception
 {
     //
 }
