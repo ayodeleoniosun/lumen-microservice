@@ -17,7 +17,6 @@ return new class extends Migration
             $table->id();
             $table->integer('user_id')->unsigned();
             $table->integer('post_id')->unsigned();
-            $table->string('status');
             $table->timestamps();
         });
     }

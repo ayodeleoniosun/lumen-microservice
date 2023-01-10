@@ -3,13 +3,13 @@
 namespace App\Services;
 
 use App\Contracts\PostServiceInterface;
-use App\Enums\PostLikeEnum;
+use App\Exceptions\PostExistException;
 use App\Exceptions\UserAlreadyLikePostException;
 use App\Http\Resources\PostCollection;
 use App\Http\Resources\PostResource;
 use App\Models\Post;
 use App\Models\PostLike;
-use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Model;
 
 class PostService implements PostServiceInterface
@@ -17,7 +17,7 @@ class PostService implements PostServiceInterface
     /**
      * Get all posts
      *
-     * @return Collection
+     * @return PostCollection
      */
     public function index(): PostCollection
     {
@@ -28,15 +28,26 @@ class PostService implements PostServiceInterface
      * Create new post
      *
      * @return Model
+     * @throws PostExistException
      */
     public function create(array $data): Model
     {
+        $postExist = Post::where([
+            'user_id' => $data['user_id'],
+            'title' => $data['title'],
+        ])->exists();
+
+        if ($postExist) {
+            throw new PostExistException();
+        }
+
         return Post::create($data);
     }
 
     /**
      *  Show post details
-     * @return Model
+     * @param int $post
+     * @return PostResource
      */
     public function show(int $post): PostResource
     {
@@ -46,10 +57,15 @@ class PostService implements PostServiceInterface
     /**
      *  Update post details
      * @return Model
+     * @throws AuthorizationException
      */
     public function update(array $data, int $id): Model
     {
         $post = Post::findOrFail($id);
+
+        if ($data['user_id'] !== $post->user_id) {
+            throw new AuthorizationException();
+        }
 
         $post->title = $data['title'];
         $post->content = $data['content'];
@@ -79,7 +95,6 @@ class PostService implements PostServiceInterface
 
         return $post->likes()->create([
             'user_id' => $user,
-            'status' => PostLikeEnum::LIKE,
         ]);
     }
 

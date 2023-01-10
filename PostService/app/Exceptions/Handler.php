@@ -79,8 +79,14 @@ class Handler extends ExceptionHandler
             return $this->error($exception->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
+        //custom exceptions
+
+        if ($exception instanceof PostExistException) {
+            return $this->error('You have already created this post.', Response::HTTP_BAD_REQUEST);
+        }
+
         if ($exception instanceof UserAlreadyLikePostException) {
-            return $this->error('You have liked this post before.', Response::HTTP_BAD_REQUEST);
+            return $this->error('You have already liked this post.', Response::HTTP_BAD_REQUEST);
         }
 
         if (env('APP_DEBUG')) {
