@@ -2,11 +2,11 @@
 
 namespace App\Providers;
 
-use App\Contracts\AuthorServiceInterface;
-use App\Services\AuthorService;
+use App\Contracts\PostServiceInterface;
+use App\Services\PostService;
 use Illuminate\Support\ServiceProvider;
 
-class AuthorServiceProvider extends ServiceProvider
+class PostServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
@@ -16,8 +16,8 @@ class AuthorServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(
-            AuthorServiceInterface::class,
-            AuthorService::class
+            PostServiceInterface::class,
+            PostService::class
         );
     }
 

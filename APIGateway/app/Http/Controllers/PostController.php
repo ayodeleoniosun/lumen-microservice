@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Contracts\AuthorServiceInterface;
+use App\Contracts\PostServiceInterface;
 use App\Contracts\UserServiceInterface;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
@@ -10,36 +10,36 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Laravel\Lumen\Http\ResponseFactory;
 
-class AuthorController extends Controller
+class PostController extends Controller
 {
     use ApiResponseTrait;
 
-    public AuthorServiceInterface $authorService;
+    public PostServiceInterface $postService;
 
     public UserServiceInterface $userService;
 
     /**
-     * @param AuthorServiceInterface $authorService
+     * @param PostServiceInterface $postService
      * @param UserServiceInterface $userService
      */
-    public function __construct(AuthorServiceInterface $authorService, UserServiceInterface $userService)
+    public function __construct(PostServiceInterface $postService, UserServiceInterface $userService)
     {
-        $this->authorService = $authorService;
+        $this->postService = $postService;
         $this->userService = $userService;
     }
 
     /**
-     * Return list of authors
+     * Return list of posts
      *
      * @return Response|ResponseFactory
      */
     public function index(): Response|ResponseFactory
     {
-        return $this->success($this->authorService->index());
+        return $this->success($this->postService->index());
     }
 
     /**
-     * Create new author
+     * Create new post
      *
      * @param Request $request
      * @return Response|ResponseFactory
@@ -47,44 +47,46 @@ class AuthorController extends Controller
     public function store(Request $request): Response|ResponseFactory
     {
         $this->userService->show($request->user_id);
-        
+
         return $this->success(
-            $this->authorService->create($request->all())
+            $this->postService->create($request->all())
         );
     }
 
     /**
-     * get and show details of existing author
+     * get and show details of existing post
      *
-     * @param $author
+     * @param $post
      * @return Response|ResponseFactory
      */
-    public function show($author): Response|ResponseFactory
+    public function show($post): Response|ResponseFactory
     {
-        return $this->success($this->authorService->show($author));
+        return $this->success($this->postService->show($post));
     }
 
     /**
-     * Update an existing author
+     * Update an existing post
      *
      * @param Request $request
-     * @param $author
+     * @param $post
      * @return Response|ResponseFactory
      */
-    public function update(Request $request, $author): Response|ResponseFactory
+    public function update(Request $request, $post): Response|ResponseFactory
     {
-        return $this->success($this->authorService->update($request->all(), $author));
+        $this->userService->show($request->user_id);
+
+        return $this->success($this->postService->update($request->all(), $post));
     }
 
     /**
-     * Remove an existing author
+     * Remove an existing post
      *
-     * @param $author
+     * @param $post
      * @return JsonResponse
      */
-    public function destroy($author): JsonResponse
+    public function destroy($post): JsonResponse
     {
-        $this->authorService->delete($author);
+        $this->postService->delete($post);
 
         return $this->deleted();
     }

@@ -2,11 +2,11 @@
 
 namespace App\Services;
 
-use App\Contracts\AuthorServiceInterface;
+use App\Contracts\PostServiceInterface;
 use App\Traits\ConsumeExternalServiceTrait;
 use GuzzleHttp\Exception\GuzzleException;
 
-class AuthorService implements AuthorServiceInterface
+class PostService implements PostServiceInterface
 {
     use ConsumeExternalServiceTrait;
 
@@ -14,12 +14,15 @@ class AuthorService implements AuthorServiceInterface
 
     private string $secret;
 
+    /**
+     * @param string $baseUrl
+     * @param string $secret
+     */
     public function __construct()
     {
-        $this->baseUrl = config('services.authors.base_url');
-        $this->secret = config('services.authors.secret');
+        $this->baseUrl = config('services.posts.base_url');
+        $this->secret = config('services.posts.secret');
     }
-
 
     /**
      * @return string
@@ -27,7 +30,7 @@ class AuthorService implements AuthorServiceInterface
      */
     public function index(): string
     {
-        return $this->sendRequest('GET', '/authors');
+        return $this->sendRequest('GET', '/posts');
     }
 
     /**
@@ -36,16 +39,16 @@ class AuthorService implements AuthorServiceInterface
      */
     public function create(array $data): string
     {
-        return $this->sendRequest('POST', '/authors', $data);
+        return $this->sendRequest('POST', '/posts', $data);
     }
 
     /**
      * @return string
      * @throws GuzzleException
      */
-    public function show(int $author): string
+    public function show(int $post): string
     {
-        return $this->sendRequest('GET', "/authors/{$author}");
+        return $this->sendRequest('GET', "/posts/{$post}");
     }
 
     /**
@@ -54,7 +57,7 @@ class AuthorService implements AuthorServiceInterface
      */
     public function update(array $data, int $id): string
     {
-        return $this->sendRequest('PUT', "/authors/{$id}", $data);
+        return $this->sendRequest('PUT', "/posts/{$id}", $data);
     }
 
     /**
@@ -63,6 +66,11 @@ class AuthorService implements AuthorServiceInterface
      */
     public function delete(int $id): void
     {
-        $this->sendRequest('DELETE', "/authors/{$id}");
+        $this->sendRequest('DELETE', "/posts/{$id}");
+    }
+
+    public function like(int $user, int $id): string
+    {
+        // TODO: Implement like() method.
     }
 }

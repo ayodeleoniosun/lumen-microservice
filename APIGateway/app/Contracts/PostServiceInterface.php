@@ -2,7 +2,7 @@
 
 namespace App\Contracts;
 
-interface BookServiceInterface
+interface PostServiceInterface
 {
     public function index(): string;
 
@@ -11,6 +11,8 @@ interface BookServiceInterface
     public function show(int $author): string;
 
     public function update(array $data, int $id): string;
+
+    public function like(int $user, int $id): string;
 
     public function delete(int $id): void;
 }

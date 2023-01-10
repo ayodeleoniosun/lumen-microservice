@@ -24,19 +24,21 @@ $router->group(['middleware' => 'client.credentials'], function () use ($router)
         $router->delete('/{user}', 'UserController@destroy');
     });
 
-    $router->group(['prefix' => 'authors'], function () use ($router) {
-        $router->get('/', 'AuthorController@index');
-        $router->post('/', 'AuthorController@store');
-        $router->get('/{author}', 'AuthorController@show');
-        $router->put('/{author}', 'AuthorController@update');
-        $router->delete('/{author}', 'AuthorController@destroy');
+    $router->group(['prefix' => 'posts'], function () use ($router) {
+        $router->post('/{post}/like', 'PostController@like');
+        $router->get('/', 'PostController@index');
+        $router->post('/', 'PostController@store');
+        $router->get('/{post}', 'PostController@show');
+        $router->put('/{post}', 'PostController@update');
+        $router->delete('/{post}', 'PostController@destroy');
     });
 
-    $router->group(['prefix' => 'books'], function () use ($router) {
-        $router->get('/', 'BookController@index');
-        $router->post('/', 'BookController@store');
-        $router->get('/{book}', 'BookController@show');
-        $router->put('/{book}', 'BookController@update');
-        $router->delete('/{book}', 'BookController@destroy');
+    $router->group(['prefix' => 'comments'], function () use ($router) {
+        $router->get('/', 'CommentController@index');
+        $router->post('/', 'CommentController@store');
+        $router->get('/{comment}', 'CommentController@show');
+        $router->put('/{comment}', 'CommentController@update');
+        $router->post('/like/{comment}', 'CommentController@like');
+        $router->delete('/{comment}', 'CommentController@destroy');
     });
 });

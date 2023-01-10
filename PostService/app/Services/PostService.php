@@ -63,7 +63,7 @@ class PostService implements PostServiceInterface
     {
         $post = Post::findOrFail($id);
 
-        if ($data['user_id'] !== $post->user_id) {
+        if ((int) $data['user_id'] !== $post->user_id) {
             throw new AuthorizationException();
         }
 
