@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Contracts\PostServiceInterface;
+use App\Contracts\CommentServiceInterface;
 use App\Contracts\UserServiceInterface;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
@@ -10,36 +11,40 @@ use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Laravel\Lumen\Http\ResponseFactory;
 
-class PostController extends Controller
+class CommentController extends Controller
 {
     use ApiResponseTrait;
+
+    public CommentServiceInterface $commentService;
 
     public PostServiceInterface $postService;
 
     public UserServiceInterface $userService;
 
     /**
+     * @param CommentServiceInterface $commentService
      * @param PostServiceInterface $postService
      * @param UserServiceInterface $userService
      */
-    public function __construct(PostServiceInterface $postService, UserServiceInterface $userService)
+    public function __construct(CommentServiceInterface $commentService, PostServiceInterface $postService, UserServiceInterface $userService)
     {
+        $this->commentService = $commentService;
         $this->postService = $postService;
         $this->userService = $userService;
     }
 
     /**
-     * Return list of posts
+     * Return list of comments
      *
      * @return Response|ResponseFactory
      */
     public function index(): Response|ResponseFactory
     {
-        return $this->success($this->postService->index());
+        return $this->success($this->commentService->index());
     }
 
     /**
-     * Create new post
+     * Create new comment
      *
      * @param Request $request
      * @return Response|ResponseFactory
@@ -48,57 +53,59 @@ class PostController extends Controller
     {
         $this->userService->show($request->user_id);
 
-        return $this->success($this->postService->store($request->all()));
+        $this->postService->show($request->post_id);
+
+        return $this->success($this->commentService->store($request->all()));
     }
 
     /**
-     * get and show details of existing post
+     * get and show details of existing comment
      *
-     * @param $post
+     * @param $comment
      * @return Response|ResponseFactory
      */
-    public function show($post): Response|ResponseFactory
+    public function show($comment): Response|ResponseFactory
     {
-        return $this->success($this->postService->show($post));
-    }
-
-    /**
-     * Update an existing post
-     *
-     * @param Request $request
-     * @param $post
-     * @return Response|ResponseFactory
-     */
-    public function update(Request $request, $post): Response|ResponseFactory
-    {
-        $this->userService->show($request->user_id);
-
-        return $this->success($this->postService->update($request->all(), $post));
+        return $this->success($this->commentService->show($comment));
     }
 
     /**
      * like existing post
      *
      * @param Request $request
-     * @param int $post
+     * @param int $comment
      * @return Response|ResponseFactory
      */
-    public function like(Request $request, int $post): Response|ResponseFactory
+    public function like(Request $request, int $comment): Response|ResponseFactory
     {
         $this->userService->show($request->user_id);
 
-        return $this->success($this->postService->like($request->all(), $post));
+        return $this->success($this->commentService->like($request->all(), $comment));
     }
 
     /**
-     * Remove an existing post
+     * Update an existing comment
      *
-     * @param $post
+     * @param Request $request
+     * @param $comment
+     * @return Response|ResponseFactory
+     */
+    public function update(Request $request, $comment): Response|ResponseFactory
+    {
+        $this->userService->show($request->user_id);
+
+        return $this->success($this->commentService->update($request->all(), $comment));
+    }
+
+    /**
+     * Remove an existing comment
+     *
+     * @param $comment
      * @return JsonResponse
      */
-    public function destroy($post): JsonResponse
+    public function destroy($comment): \Illuminate\Http\JsonResponse
     {
-        $this->postService->delete($post);
+        $this->commentService->delete($comment);
 
         return $this->deleted();
     }

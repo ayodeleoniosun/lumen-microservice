@@ -76,7 +76,7 @@ class PostController extends Controller
     }
 
     /**
-     * get and show details of existing post
+     * like existing post
      *
      * @param Request $request
      * @param int $post

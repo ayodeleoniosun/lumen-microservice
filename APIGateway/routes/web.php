@@ -25,11 +25,11 @@ $router->group(['middleware' => 'client.credentials'], function () use ($router)
     });
 
     $router->group(['prefix' => 'posts'], function () use ($router) {
-        $router->post('/{post}/like', 'PostController@like');
         $router->get('/', 'PostController@index');
         $router->post('/', 'PostController@store');
         $router->get('/{post}', 'PostController@show');
         $router->put('/{post}', 'PostController@update');
+        $router->post('/{post}/like', 'PostController@like');
         $router->delete('/{post}', 'PostController@destroy');
     });
 
@@ -38,7 +38,7 @@ $router->group(['middleware' => 'client.credentials'], function () use ($router)
         $router->post('/', 'CommentController@store');
         $router->get('/{comment}', 'CommentController@show');
         $router->put('/{comment}', 'CommentController@update');
-        $router->post('/like/{comment}', 'CommentController@like');
+        $router->post('/{comment}/like', 'CommentController@like');
         $router->delete('/{comment}', 'CommentController@destroy');
     });
 });

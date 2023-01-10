@@ -20,5 +20,5 @@ $router->group(['prefix' => 'posts'], function () use ($router) {
     $router->put('/{post}', 'PostController@update');
     $router->delete('/{post}', 'PostController@destroy');
 
-    $router->post('/like/{post}', 'PostController@like');
+    $router->post('/{post}/like', 'PostController@like');
 });

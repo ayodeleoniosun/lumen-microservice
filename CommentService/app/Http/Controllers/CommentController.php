@@ -76,7 +76,7 @@ class CommentController extends Controller
     }
 
     /**
-     * get and show details of existing comment
+     * like existing comment
      *
      * @param Request $request
      * @param int $comment

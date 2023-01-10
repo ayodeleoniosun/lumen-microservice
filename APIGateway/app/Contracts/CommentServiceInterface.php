@@ -2,7 +2,7 @@
 
 namespace App\Contracts;
 
-interface PostServiceInterface
+interface CommentServiceInterface
 {
     public function index(): string;
 

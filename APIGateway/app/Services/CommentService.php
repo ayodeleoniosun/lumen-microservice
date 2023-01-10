@@ -2,11 +2,11 @@
 
 namespace App\Services;
 
-use App\Contracts\PostServiceInterface;
+use App\Contracts\CommentServiceInterface;
 use App\Traits\ConsumeExternalServiceTrait;
 use GuzzleHttp\Exception\GuzzleException;
 
-class PostService implements PostServiceInterface
+class CommentService implements CommentServiceInterface
 {
     use ConsumeExternalServiceTrait;
 
@@ -14,50 +14,42 @@ class PostService implements PostServiceInterface
 
     private string $secret;
 
-    /**
-     * @param string $baseUrl
-     * @param string $secret
-     */
     public function __construct()
     {
-        $this->baseUrl = config('services.posts.base_url');
-        $this->secret = config('services.posts.secret');
+        $this->baseUrl = config('services.comments.base_url');
+        $this->secret = config('services.comments.secret');
     }
 
     /**
-     * @return string
      * @throws GuzzleException
      */
     public function index(): string
     {
-        return $this->sendRequest('GET', '/posts');
+        return $this->sendRequest('GET', '/comments');
     }
 
     /**
-     * @return string
      * @throws GuzzleException
      */
     public function store(array $data): string
     {
-        return $this->sendRequest('POST', '/posts', $data);
+        return $this->sendRequest('POST', '/comments', $data);
     }
 
     /**
-     * @return string
      * @throws GuzzleException
      */
-    public function show(int $post): string
+    public function show(int $comments): string
     {
-        return $this->sendRequest('GET', "/posts/{$post}");
+        return $this->sendRequest('GET', "/comments/{$comments}");
     }
 
     /**
-     * @return string
      * @throws GuzzleException
      */
     public function update(array $data, int $id): string
     {
-        return $this->sendRequest('PUT', "/posts/{$id}", $data);
+        return $this->sendRequest('PUT', "/comments/{$id}", $data);
     }
 
     /**
@@ -66,15 +58,14 @@ class PostService implements PostServiceInterface
      */
     public function like(array $data, int $id): string
     {
-        return $this->sendRequest('POST', "/posts/{$id}/like", $data);
+        return $this->sendRequest('POST', "/comments/{$id}/like", $data);
     }
 
     /**
-     * @return void
      * @throws GuzzleException
      */
     public function delete(int $id): void
     {
-        $this->sendRequest('DELETE', "/posts/{$id}");
+        $this->sendRequest('DELETE', "/comments/{$id}");
     }
 }

@@ -56,7 +56,7 @@ class CommentService implements CommentServiceInterface
     {
         $comment = Comment::findOrFail($id);
 
-        if ($data['user_id'] !== $comment->user_id) {
+        if ((int) $data['user_id'] !== $comment->user_id) {
             throw new AuthorizationException();
         }
 

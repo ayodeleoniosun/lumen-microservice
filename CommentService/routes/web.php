@@ -20,5 +20,5 @@ $router->group(['prefix' => 'comments'], function () use ($router) {
     $router->put('/{comment}', 'CommentController@update');
     $router->delete('/{comment}', 'CommentController@destroy');
 
-    $router->post('/like/{comment}', 'CommentController@like');
+    $router->post('/{comment}/like', 'CommentController@like');
 });
