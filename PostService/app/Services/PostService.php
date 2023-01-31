@@ -5,10 +5,10 @@ namespace App\Services;
 use App\Contracts\PostServiceInterface;
 use App\Exceptions\PostExistException;
 use App\Exceptions\UserAlreadyLikePostException;
-use App\Http\Resources\PostCollection;
-use App\Http\Resources\PostResource;
-use App\Models\Post;
-use App\Models\PostLike;
+use App\Http\Resources\Post\PostCollection;
+use App\Http\Resources\Post\PostResource;
+use App\Models\Post\Post;
+use App\Models\Post\PostLike;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Model;
 

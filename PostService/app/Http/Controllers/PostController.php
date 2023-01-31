@@ -4,7 +4,6 @@ namespace App\Http\Controllers;
 
 use App\Contracts\PostServiceInterface;
 use App\Http\Requests\PostRequest;
-use App\Models\Post;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;

@@ -2,8 +2,8 @@
 
 namespace App\Contracts;
 
-use App\Http\Resources\PostCollection;
-use App\Http\Resources\PostResource;
+use App\Http\Resources\Post\PostCollection;
+use App\Http\Resources\Post\PostResource;
 use Illuminate\Database\Eloquent\Model;
 
 interface PostServiceInterface

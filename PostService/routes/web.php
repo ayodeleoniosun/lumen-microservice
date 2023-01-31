@@ -22,3 +22,14 @@ $router->group(['prefix' => 'posts'], function () use ($router) {
 
     $router->post('/{post}/like', 'PostController@like');
 });
+
+
+$router->group(['prefix' => 'comments'], function () use ($router) {
+    $router->get('/', 'CommentController@index');
+    $router->post('/', 'CommentController@store');
+    $router->get('/{comment}', 'CommentController@show');
+    $router->put('/{comment}', 'CommentController@update');
+    $router->delete('/{comment}', 'CommentController@destroy');
+
+    $router->post('/{comment}/like', 'CommentController@like');
+});
