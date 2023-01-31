@@ -4,7 +4,7 @@ namespace App\Contracts;
 
 interface CommentServiceInterface
 {
-    public function index(): string;
+    public function index(int $post): string;
 
     public function store(array $data): string;
 

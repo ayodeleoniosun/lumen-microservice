@@ -38,9 +38,9 @@ class CommentController extends Controller
      *
      * @return Response|ResponseFactory
      */
-    public function index(): Response|ResponseFactory
+    public function index(int $post): Response|ResponseFactory
     {
-        return $this->success($this->commentService->index());
+        return $this->success($this->commentService->index($post));
     }
 
     /**

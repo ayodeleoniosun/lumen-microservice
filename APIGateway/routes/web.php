@@ -34,7 +34,7 @@ $router->group(['middleware' => 'client.credentials'], function () use ($router)
     });
 
     $router->group(['prefix' => 'comments'], function () use ($router) {
-        $router->get('/', 'CommentController@index');
+        $router->get('/posts/{post}', 'CommentController@index');
         $router->post('/', 'CommentController@store');
         $router->get('/{comment}', 'CommentController@show');
         $router->put('/{comment}', 'CommentController@update');

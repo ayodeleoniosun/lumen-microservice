@@ -23,9 +23,9 @@ class CommentService implements CommentServiceInterface
     /**
      * @throws GuzzleException
      */
-    public function index(): string
+    public function index(int $post): string
     {
-        return $this->sendRequest('GET', '/comments');
+        return $this->sendRequest('GET', "/comments/posts/{$post}");
     }
 
     /**
