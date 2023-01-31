@@ -2,8 +2,10 @@
 
 namespace App\Http\Requests;
 
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Http\Request;
 use Illuminate\Validation\UnauthorizedException;
+use Illuminate\Validation\ValidationException;
 use Laravel\Lumen\Routing\ProvidesConvenienceMethods;
 
 class FormRequest
@@ -12,18 +14,23 @@ class FormRequest
 
     public Request $request;
 
-    public function __construct(Request $request, array $messages = [], array $customAttributes = [])
+    /**
+     * @throws AuthorizationException
+     * @throws ValidationException
+     */
+    public function __construct(Request $request, array|null $customAttributes = null)
     {
+        $customAttributes ??= [];
         $this->request = $request;
 
         if (!$this->authorize()) {
             throw new UnauthorizedException();
         }
 
-        $this->validate($this->request, $this->rules(), $messages, $customAttributes);
+        $this->validate($this->request, $this->rules(), $this->messages(), $customAttributes);
     }
 
-    public function validated()
+    public function validated(): array
     {
         return $this->request->all();
     }
@@ -33,12 +40,17 @@ class FormRequest
         return $this->request->get($key, $default);
     }
 
-    protected function authorize()
+    protected function authorize(): bool
     {
         return true;
     }
 
-    protected function rules()
+    protected function rules(): array
+    {
+        return [];
+    }
+
+    protected function messages(): array
     {
         return [];
     }
