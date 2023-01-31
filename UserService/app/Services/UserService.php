@@ -11,6 +11,17 @@ use Illuminate\Support\Facades\Hash;
 
 class UserService implements UserServiceInterface
 {
+    public User $user;
+
+    /**
+     * @param User $user
+     */
+    public function __construct(User $user)
+    {
+        $this->user = $user;
+    }
+
+
     /**
      * Get all users
      *
@@ -18,7 +29,7 @@ class UserService implements UserServiceInterface
      */
     public function index(): Collection
     {
-        return User::all();
+        return $this->user->all();
     }
 
     /**
@@ -31,7 +42,7 @@ class UserService implements UserServiceInterface
         $data['password'] = Hash::make($data['password']);
         $data['email_verified_at'] = Carbon::now()->toDateTimeString();
 
-        return User::create($data);
+        return $this->user->create($data);
     }
 
     /**
@@ -40,7 +51,7 @@ class UserService implements UserServiceInterface
      */
     public function show(int $user): Model
     {
-        return User::findOrFail($user);
+        return $this->user->findOrFail($user);
     }
 
     /**
@@ -49,11 +60,12 @@ class UserService implements UserServiceInterface
      */
     public function update(array $data, int $id): Model
     {
-        $user = User::findOrFail($id);
+        $user = $this->show($id);
 
         $user->firstname = $data['firstname'];
         $user->lastname = $data['lastname'];
         $user->gender = $data['gender'];
+
         $user->save();
 
         return $user;
@@ -65,7 +77,7 @@ class UserService implements UserServiceInterface
      */
     public function delete(int $id): void
     {
-        $user = User::findOrFail($id);
+        $user = $this->show($id);
         $user->delete();
     }
 }
