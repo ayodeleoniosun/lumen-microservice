@@ -1,18 +1,18 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\post;
 
-use App\Models\Post;
+use App\Models\Post\PostLike;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
-class PostFactory extends Factory
+class PostLikeFactory extends Factory
 {
     /**
      * The name of the factory's corresponding model.
      *
      * @var string
      */
-    protected $model = Post::class;
+    protected $model = PostLike::class;
 
     /**
      * Define the model's default state.
@@ -23,8 +23,7 @@ class PostFactory extends Factory
     {
         return [
             'user_id' => $this->faker->numberBetween(1, 50),
-            'title' => $this->faker->sentence(3, true),
-            'content' => $this->faker->sentence(10, true),
+            'post_id' => $this->faker->numberBetween(1, 50),
         ];
     }
 }

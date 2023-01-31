@@ -1,8 +1,8 @@
 <?php
 
-namespace Database\Factories;
+namespace Database\Factories\comment;
 
-use App\Models\CommentLike;
+use App\Models\Comment\CommentLike;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 class CommentLikeFactory extends Factory
