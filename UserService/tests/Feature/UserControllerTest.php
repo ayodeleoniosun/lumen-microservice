@@ -12,6 +12,11 @@ class UserControllerTest extends TestCase
     use CreateUser;
     use DatabaseMigrations;
 
+    protected function setup(): void
+    {
+        parent::setUp();
+    }
+
     public function testShouldReturnAllUsers()
     {
         $this->createUser();
@@ -56,8 +61,8 @@ class UserControllerTest extends TestCase
         $data = $this->responseData($response);
 
         $this->assertEquals('error', $data->status);
-        $this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
         $this->assertStringContainsString('The selected gender is invalid', $data->message);
+        $this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     public function testInvalidEmailShouldNotCreateNewUser()
@@ -72,8 +77,8 @@ class UserControllerTest extends TestCase
         $data = $this->responseData($response);
 
         $this->assertEquals('error', $data->status);
-        $this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
         $this->assertStringContainsString('The email must be a valid email address', $data->message);
+        $this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     public function testExistingEmailShouldNotCreateNewUser()
@@ -87,12 +92,11 @@ class UserControllerTest extends TestCase
         ];
 
         $this->post($this->baseUrl . '/users', $payload);
-        $response = $this->post($this->baseUrl . '/users', $payload);
-        $data = $this->responseData($response);
+        $data = $this->createNewUserAndReturnData();
 
         $this->assertEquals('error', $data->status);
-        $this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
         $this->assertEquals('The email has already been taken.', $data->message);
+        $this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     public function testShouldCreateNewUser()
@@ -127,36 +131,24 @@ class UserControllerTest extends TestCase
 
     public function testShouldNotUpdateInvalidUser()
     {
-        $response = $this->put($this->baseUrl . "/users/1", [
-            'firstname' => 'ayodele new',
-            'lastname' => 'oniosun new',
-            'gender' => 'female',
-        ]);
+        $data = $this->updateUserAndReturnData(1);
 
-        $userResponse = $this->responseData($response);
-
-        $this->assertEquals('error', $userResponse->status);
-        $this->assertEquals('User not found', $userResponse->message);
+        $this->assertEquals('error', $data->status);
+        $this->assertEquals('User not found', $data->message);
         $this->assertResponseStatus(Response::HTTP_NOT_FOUND);
     }
 
     public function testShouldUpdateUser()
     {
         $data = $this->createNewUserAndReturnData();
-
-        $response = $this->put($this->baseUrl . "/users/{$data->data->id}", [
-            'firstname' => 'ayodele new',
-            'lastname' => 'oniosun new',
-            'gender' => 'female',
-        ]);
-
-        $userResponse = $this->responseData($response);
+        $userResponse = $this->updateUserAndReturnData($data->data->id);
 
         $this->assertEquals('success', $userResponse->status);
         $this->assertEquals('Profile successfully updated', $userResponse->message);
         $this->assertEquals($data->data->id, $userResponse->data->id);
-        $this->assertEquals('ayodele new', $userResponse->data->firstname);
-        $this->assertEquals('oniosun new', $userResponse->data->lastname);
+        $this->assertEquals('updated firstname', $userResponse->data->firstname);
+        $this->assertEquals('updated lastname', $userResponse->data->lastname);
+        $this->assertEquals('female', $userResponse->data->gender);
         $this->assertResponseStatus(Response::HTTP_OK);
     }
 
@@ -190,4 +182,21 @@ class UserControllerTest extends TestCase
 
         return $this->responseData($response);
     }
+
+    private function updateUserAndReturnData(int $id)
+    {
+        $response = $this->put($this->baseUrl . "/users/{$id}", [
+            'firstname' => 'updated firstname',
+            'lastname' => 'updated lastname',
+            'gender' => 'female',
+        ]);
+
+        return $this->responseData($response);
+    }
+
+    protected function tearDown(): void
+    {
+        parent::tearDown();
+    }
+
 }
