@@ -4,7 +4,7 @@ namespace App\Services;
 
 use App\Contracts\PostServiceInterface;
 use App\Exceptions\PostExistException;
-use App\Exceptions\UserAlreadyLikePostException;
+use App\Exceptions\UserAlreadyLikedPostException;
 use App\Http\Resources\Post\PostCollection;
 use App\Http\Resources\Post\PostResource;
 use App\Models\Post\Post;
@@ -78,7 +78,7 @@ class PostService implements PostServiceInterface
      * @param int $user
      * @param int $id
      * @return Model
-     * @throws UserAlreadyLikePostException
+     * @throws UserAlreadyLikedPostException
      */
     public function like(int $user, int $id): Model
     {
@@ -88,7 +88,7 @@ class PostService implements PostServiceInterface
         ])->exists();
 
         if ($hasLiked) {
-            throw new UserAlreadyLikePostException();
+            throw new UserAlreadyLikedPostException();
         }
 
         $post = Post::findOrFail($id);

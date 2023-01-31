@@ -87,8 +87,12 @@ class Handler extends ExceptionHandler
             return $this->error('You have already created this post.');
         }
 
-        if ($exception instanceof UserAlreadyLikePostException) {
+        if ($exception instanceof UserAlreadyLikedPostException) {
             return $this->error('You have already liked this post.');
+        }
+
+        if ($exception instanceof UserAlreadyLikedCommentException) {
+            return $this->error('You have already liked this comment.');
         }
 
         if (env('APP_DEBUG')) {

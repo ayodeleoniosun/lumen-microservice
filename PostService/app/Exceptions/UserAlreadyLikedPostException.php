@@ -4,7 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 
-class UserAlreadyLikePostException extends Exception
+class UserAlreadyLikedPostException extends Exception
 {
     //
 }
