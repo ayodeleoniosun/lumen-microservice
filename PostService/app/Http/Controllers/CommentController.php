@@ -28,9 +28,9 @@ class CommentController extends Controller
      *
      * @return JsonResponse
      */
-    public function index(): JsonResponse
+    public function index(int $post): JsonResponse
     {
-        $response = $this->commentService->index();
+        $response = $this->commentService->index($post);
 
         return $this->success($response);
     }

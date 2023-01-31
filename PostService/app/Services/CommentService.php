@@ -18,9 +18,9 @@ class CommentService implements CommentServiceInterface
      *
      * @return CommentCollection
      */
-    public function index(): CommentCollection
+    public function index(int $post): CommentCollection
     {
-        return new CommentCollection(Comment::with('likes')->get());
+        return new CommentCollection(Comment::where('post_id', $post)->with('likes')->get());
     }
 
     /**

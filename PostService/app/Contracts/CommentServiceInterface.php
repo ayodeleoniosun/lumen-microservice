@@ -8,7 +8,7 @@ use Illuminate\Database\Eloquent\Model;
 
 interface CommentServiceInterface
 {
-    public function index(): CommentCollection;
+    public function index(int $post): CommentCollection;
 
     public function create(array $data): Model;
 

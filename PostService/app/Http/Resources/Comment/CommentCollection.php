@@ -5,6 +5,7 @@ namespace App\Http\Resources\Comment;
 use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Support\Collection;
 
 class CommentCollection extends ResourceCollection
 {
@@ -12,12 +13,10 @@ class CommentCollection extends ResourceCollection
      * Transform the resource collection into an array.
      *
      * @param Request $request
-     * @return array|Arrayable|\JsonSerializable
+     * @return Collection
      */
-    public function toArray($request)
+    public function toArray($request): Collection
     {
-        return [
-            'data' => $this->collection,
-        ];
+        return $this->collection;
     }
 }

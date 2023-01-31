@@ -53,17 +53,11 @@ class PostControllerTest extends TestCase
         $this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
-    public function testExistingPostShouldNotCreateNewPost()
+    public function testExistingRecordShouldNotCreateNewPost()
     {
-        $payload = [
-            'user_id' => $this->userId,
-            'title' => 'this is a new post',
-            'content' => 'this is the new post description',
-        ];
-
+        $payload = $this->newPostPayload();
         $this->post($this->baseUrl . '/posts', $payload);
-
-        $data = $this->createNewPostAndReturnData();
+        $data = $this->createNewPostAndReturnData($payload);
 
         $this->assertEquals('error', $data->status);
         $this->assertEquals('You have already created this post.', $data->message);
@@ -72,10 +66,14 @@ class PostControllerTest extends TestCase
 
     public function testShouldCreateNewPost()
     {
-        $data = $this->createNewPostAndReturnData();
+        $payload = $this->newPostPayload();
+        $data = $this->createNewPostAndReturnData($payload);
 
         $this->assertEquals('success', $data->status);
         $this->assertEquals('Post successfully created', $data->message);
+        $this->assertEquals($payload['user_id'], $data->data->user_id);
+        $this->assertEquals($payload['title'], $data->data->title);
+        $this->assertEquals($payload['content'], $data->data->content);
         $this->assertResponseStatus(Response::HTTP_CREATED);
     }
 
@@ -91,18 +89,23 @@ class PostControllerTest extends TestCase
 
     public function testShouldShowPostDetails()
     {
-        $data = $this->createNewPostAndReturnData();
+        $payload = $this->newPostPayload();
+        $data = $this->createNewPostAndReturnData($payload);
+
         $response = $this->get($this->baseUrl . "/posts/{$data->data->id}");
         $postResponse = $this->responseData($response);
 
         $this->assertEquals('success', $postResponse->status);
         $this->assertEquals($data->data->id, $postResponse->data->id);
+        $this->assertEquals($data->data->title, $postResponse->data->title);
+        $this->assertEquals($data->data->content, $postResponse->data->content);
         $this->assertResponseStatus(Response::HTTP_OK);
     }
 
     public function testShouldNotUpdateInvalidPost()
     {
-        $data = $this->updatePostAndReturnData(1);
+        $payload = $this->newPostPayload();
+        $data = $this->updatePostAndReturnData(1, $payload);
 
         $this->assertEquals('error', $data->status);
         $this->assertEquals('Post not found', $data->message);
@@ -111,8 +114,12 @@ class PostControllerTest extends TestCase
 
     public function testShouldUpdatePost()
     {
-        $data = $this->createNewPostAndReturnData();
-        $postResponse = $this->updatePostAndReturnData($data->data->id);
+        $payload = $this->newPostPayload();
+        $data = $this->createNewPostAndReturnData($payload);
+
+        $payload['title'] = 'this is the updated post';
+        $payload['content'] = 'this is the updated description';
+        $postResponse = $this->updatePostAndReturnData($data->data->id, $payload);
 
         $this->assertEquals('success', $postResponse->status);
         $this->assertEquals('Post successfully updated', $postResponse->message);
@@ -133,7 +140,9 @@ class PostControllerTest extends TestCase
 
     public function testShouldNotLikeAnAlreadyLikedPost()
     {
-        $post = $this->createNewPostAndReturnData();
+        $payload = $this->newPostPayload();
+        $post = $this->createNewPostAndReturnData($payload);
+
         $this->likePostAndReturnData($post->data->id);
         $postResponse = $this->likePostAndReturnData($post->data->id);
 
@@ -144,7 +153,8 @@ class PostControllerTest extends TestCase
 
     public function testShouldLikeAPost()
     {
-        $post = $this->createNewPostAndReturnData();
+        $payload = $this->newPostPayload();
+        $post = $this->createNewPostAndReturnData($payload);
         $postResponse = $this->likePostAndReturnData($post->data->id);
 
         $this->assertEquals('success', $postResponse->status);
@@ -166,31 +176,22 @@ class PostControllerTest extends TestCase
 
     public function testShouldDeletePost()
     {
-        $data = $this->createNewPostAndReturnData();
+        $payload = $this->newPostPayload();
+        $data = $this->createNewPostAndReturnData($payload);
         $this->delete($this->baseUrl . "/posts/{$data->data->id}");
 
         $this->assertResponseStatus(Response::HTTP_NO_CONTENT);
     }
 
-    private function createNewPostAndReturnData()
+    private function createNewPostAndReturnData(array $payload)
     {
-        $response = $this->post($this->baseUrl . '/posts', [
-            'user_id' => $this->userId,
-            'title' => 'this is a new post',
-            'content' => 'this is the new post description',
-        ]);
-
+        $response = $this->post($this->baseUrl . '/posts', $payload);
         return $this->responseData($response);
     }
 
-    private function updatePostAndReturnData(int $id)
+    private function updatePostAndReturnData(int $id, array $payload)
     {
-        $response = $this->put($this->baseUrl . "/posts/{$id}", [
-            'user_id' => $this->userId,
-            'title' => 'this is the updated post',
-            'content' => 'this is the updated description',
-        ]);
-
+        $response = $this->put($this->baseUrl . "/posts/{$id}", $payload);
         return $this->responseData($response);
     }
 
@@ -201,6 +202,15 @@ class PostControllerTest extends TestCase
         ]);
 
         return $this->responseData($response);
+    }
+
+    private function newPostPayload(): array
+    {
+        return [
+            'user_id' => $this->userId,
+            'title' => 'this is a new post',
+            'content' => 'this is a new post description',
+        ];
     }
 
     public function tearDown():void

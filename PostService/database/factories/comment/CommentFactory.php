@@ -23,7 +23,7 @@ class CommentFactory extends Factory
     {
         return [
             'user_id' => $this->faker->numberBetween(1, 50),
-            'post_id' => $this->faker->numberBetween(1, 50),
+            'post_id' => 1,
             'comment' => $this->faker->sentence(10, true),
         ];
     }

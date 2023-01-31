@@ -2,9 +2,9 @@
 
 namespace App\Http\Resources\Post;
 
-use Illuminate\Contracts\Support\Arrayable;
 use Illuminate\Http\Request;
 use Illuminate\Http\Resources\Json\ResourceCollection;
+use Illuminate\Support\Collection;
 
 class PostCollection extends ResourceCollection
 {
@@ -12,9 +12,9 @@ class PostCollection extends ResourceCollection
      * Transform the resource collection into an array.
      *
      * @param Request $request
-     * @return array|Arrayable|\JsonSerializable
+     * @return Collection
      */
-    public function toArray($request): array|\JsonSerializable|Arrayable
+    public function toArray($request): Collection
     {
         return $this->collection;
     }
