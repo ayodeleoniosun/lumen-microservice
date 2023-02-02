@@ -2,11 +2,10 @@
 
 namespace App\Services;
 
+use App\Contracts\OauthServiceInterface;
 use App\Contracts\UserServiceInterface;
-use App\Exceptions\InvalidLoginCredentialsException;
+use App\Exceptions\InvalidLoginException;
 use App\Models\User;
-use GuzzleHttp\Client;
-use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -18,12 +17,16 @@ class UserService implements UserServiceInterface
 {
     public User $user;
 
+    public OauthServiceInterface $oauthService;
+
     /**
      * @param User $user
+     * @param OauthServiceInterface $oauthService
      */
-    public function __construct(User $user)
+    public function __construct(User $user, OauthServiceInterface $oauthService)
     {
         $this->user = $user;
+        $this->oauthService = $oauthService;
     }
 
     /**
@@ -55,63 +58,17 @@ class UserService implements UserServiceInterface
      *
      * @param array $data
      * @return array
-     * @throws GuzzleException
-     * @throws InvalidLoginCredentialsException
+     * @throws Throwable
      */
     public function login(array $data): array
     {
         $user = $this->user->whereEmail($data['email'])->first();
 
-        if (! $user || ! Hash::check($data['password'], $user->password)) {
-            throw new InvalidLoginCredentialsException();
-        }
+        throw_if((! $user || ! Hash::check($data['password'], $user->password)), InvalidLoginException::class);
 
-        $token = $this->generateToken($data);
+        $token = $this->oauthService->generateToken($data);
 
         return compact('user', 'token');
-    }
-
-    /**
-     * @param $data
-     * @return mixed
-     * @throws GuzzleException
-     */
-    public function generateToken($data): mixed
-    {
-        $oauthClientId = config('services.oauth.client_id');
-        $oauthClientSecret = config('services.oauth.client_secret');
-        $oauthBaseUrl = config('services.oauth.base_url');
-
-        $generateToken = $this->sendRequest('POST', $oauthBaseUrl, [
-            'grant_type' => 'password',
-            'client_id' => $oauthClientId,
-            'client_secret' => $oauthClientSecret,
-            'username' => $data['email'],
-            'password' => $data['password'],
-            'scope' => '*',
-        ]);
-
-        return json_decode($generateToken);
-    }
-
-    /**
-     * @param $method
-     * @param $requestUrl
-     * @param array $params
-     * @param array $headers
-     * @return string
-     * @throws GuzzleException
-     */
-    public function sendRequest($method, $requestUrl, array $params = [], array $headers = []): string
-    {
-        $client = new Client(['base_uri' => $requestUrl]);
-
-        $response = $client->request($method, $requestUrl, [
-            'form_params' => $params,
-            'headers' => $headers,
-        ]);
-
-        return $response->getBody()->getContents();
     }
 
     /**

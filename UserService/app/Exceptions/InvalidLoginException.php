@@ -4,7 +4,7 @@ namespace App\Exceptions;
 
 use Exception;
 
-class InvalidLoginCredentialsException extends Exception
+class InvalidLoginException extends Exception
 {
     //
 }

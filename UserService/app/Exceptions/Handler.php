@@ -81,13 +81,13 @@ class Handler extends ExceptionHandler
             return $this->error($exception->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY);
         }
 
-        if (env('APP_DEBUG')) {
-            return parent::render($request, $exception);
+        //custom exceptions
+        if ($exception instanceof InvalidLoginException) {
+            return $this->error('Invalid login credentials', Response::HTTP_UNAUTHORIZED);
         }
 
-        //custom exceptions
-        if ($exception instanceof InvalidLoginCredentialsException) {
-            return $this->error('Invalid login credentials', Response::HTTP_UNAUTHORIZED);
+        if (env('APP_DEBUG')) {
+            return parent::render($request, $exception);
         }
 
         return $this->error("Something went wrong. Try again later.", Response::HTTP_INTERNAL_SERVER_ERROR);
