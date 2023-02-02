@@ -11,9 +11,23 @@ use App\Models\Post\Post;
 use App\Models\Post\PostLike;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Model;
+use Throwable;
 
 class PostService implements PostServiceInterface
 {
+    public Post $post;
+    public PostLike $postLike;
+
+    /**
+     * @param Post $post
+     * @param PostLike $postLike
+     */
+    public function __construct(Post $post, PostLike $postLike)
+    {
+        $this->post = $post;
+        $this->postLike = $postLike;
+    }
+
     /**
      * Get all posts
      *
@@ -21,27 +35,23 @@ class PostService implements PostServiceInterface
      */
     public function index(): PostCollection
     {
-        return new PostCollection(Post::with('likes')->get());
+        return new PostCollection($this->post->with('likes')->get());
     }
 
     /**
      * Create new post
      *
+     * @param array $data
      * @return Model
-     * @throws PostExistException
+     * @throws Throwable
      */
     public function create(array $data): Model
     {
-        $postExist = Post::where([
-            'user_id' => $data['user_id'],
-            'title' => $data['title'],
-        ])->exists();
+        $postExist = $this->post->whereUserId($data['user_id'])->whereTitle($data['title'])->exists();
 
-        if ($postExist) {
-            throw new PostExistException();
-        }
+        throw_if($postExist, PostExistException::class);
 
-        return Post::create($data);
+        return $this->post->create($data);
     }
 
     /**
@@ -51,21 +61,21 @@ class PostService implements PostServiceInterface
      */
     public function show(int $post): PostResource
     {
-        return new PostResource(Post::findOrFail($post));
+        return new PostResource($this->post->findOrFail($post));
     }
 
     /**
      *  Update post details
+     * @param array $data
+     * @param int $id
      * @return Model
-     * @throws AuthorizationException
+     * @throws Throwable
      */
     public function update(array $data, int $id): Model
     {
-        $post = Post::findOrFail($id);
+        $post = $this->post->findOrFail($id);
 
-        if ((int) $data['user_id'] !== $post->user_id) {
-            throw new AuthorizationException();
-        }
+        throw_if((int) $data['user_id'] !== $post->user_id, AuthorizationException::class);
 
         $post->title = $data['title'];
         $post->content = $data['content'];
@@ -79,19 +89,15 @@ class PostService implements PostServiceInterface
      * @param int $id
      * @return Model
      * @throws UserAlreadyLikedPostException
+     * @throws Throwable
      */
     public function like(int $user, int $id): Model
     {
-        $hasLiked = PostLike::where([
-            'user_id' => $user,
-            'post_id' => $id,
-        ])->exists();
+        $hasLiked = $this->postLike->whereUserId($user)->wherePostId($id)->exists();
 
-        if ($hasLiked) {
-            throw new UserAlreadyLikedPostException();
-        }
+        throw_if($hasLiked, UserAlreadyLikedPostException::class);
 
-        $post = Post::findOrFail($id);
+        $post = $this->post->findOrFail($id);
 
         return $post->likes()->create([
             'user_id' => $user,
@@ -105,7 +111,7 @@ class PostService implements PostServiceInterface
      */
     public function delete(int $id): void
     {
-        $post = Post::findOrFail($id);
+        $post = $this->post->findOrFail($id);
         $post->delete();
     }
 }

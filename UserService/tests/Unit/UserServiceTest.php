@@ -8,7 +8,6 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Lumen\Testing\DatabaseMigrations;
-use Mockery\MockInterface;
 use Tests\TestCase;
 use Tests\Traits\CreateUser;
 
@@ -23,7 +22,7 @@ class UserServiceTest extends TestCase
     protected function setup(): void
     {
         parent::setUp();
-        $this->user = \Mockery::mock(User::class);
+        $this->user = \Mockery::mock(User::class)->makePartial();
         $this->userService = new UserService($this->user);
     }
 
@@ -113,13 +112,13 @@ class UserServiceTest extends TestCase
 
         $mockUpdateUser = $this->mockUser($payload);
 
-        $this->app->instance(
-            User::class,
-            \Mockery::mock(User::class, function ($mock) use ($mockUpdateUser) {
-                $mock->shouldReceive('delete')->andReturn($mockUpdateUser);
-                return $mock;
-            })
-        );
+//        $this->app->instance(
+//            User::class,
+//            \Mockery::mock(User::class, function ($mock) use ($mockUpdateUser) {
+//                $mock->shouldReceive('delete')->andReturn($mockUpdateUser);
+//                return $mock;
+//            })
+//        );
 
         $response = $this->userService->update($payload, $mockedUser->id);
 
