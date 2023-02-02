@@ -70,21 +70,21 @@ class PostServiceTest extends TestCase
             'content' => 'This is the description',
         ];
 
-        $mockedPost = $this->mockPost();
+        $post = $this->mockPost();
 
         $this->post->expects('whereUserId')->with($payload['user_id'])->andReturnSelf();
         $this->post->expects('whereTitle')->with($payload['title'])->andReturnSelf();
         $this->post->expects('exists')->andReturnFalse();
 
-        $this->post->expects('create')->andReturn($mockedPost);
+        $this->post->expects('create')->andReturn($post);
 
         $response = $this->postService->create($payload);
 
         $this->assertInstanceOf(Post::class, $response);
-        $this->assertEquals($mockedPost->id, $response->id);
-        $this->assertEquals($mockedPost->user_id, $response->user_id);
-        $this->assertEquals($mockedPost->title, $response->title);
-        $this->assertEquals($mockedPost->content, $response->content);
+        $this->assertEquals($post->id, $response->id);
+        $this->assertEquals($post->user_id, $response->user_id);
+        $this->assertEquals($post->title, $response->title);
+        $this->assertEquals($post->content, $response->content);
     }
 
     public function testCannotShowInvalidPostDetails()
@@ -101,29 +101,29 @@ class PostServiceTest extends TestCase
 
     public function testCanShowPostDetails()
     {
-        $mockedPost = $this->mockPost();
+        $post = $this->mockPost();
 
         $this->post->expects('findOrFail')
-            ->with($mockedPost->id)
-            ->andReturn($mockedPost);
+            ->with($post->id)
+            ->andReturn($post);
 
-        $response = $this->postService->show($mockedPost->id);
+        $response = $this->postService->show($post->id);
 
         $this->assertInstanceOf(PostResource::class, $response);
-        $this->assertEquals($mockedPost->id, $response->id);
-        $this->assertEquals($mockedPost->user_id, $response->user_id);
-        $this->assertEquals($mockedPost->title, $response->title);
-        $this->assertEquals($mockedPost->content, $response->content);
+        $this->assertEquals($post->id, $response->id);
+        $this->assertEquals($post->user_id, $response->user_id);
+        $this->assertEquals($post->title, $response->title);
+        $this->assertEquals($post->content, $response->content);
     }
 
     public function testCanUpdateExistingPost()
     {
-        $mockedPost = $this->mockPost();
+        $post = $this->mockPost();
 
         $this->post->shouldReceive('findOrFail')
             ->once()
-            ->with($mockedPost->id)
-            ->andReturn($mockedPost);
+            ->with($post->id)
+            ->andReturn($post);
 
         $payload = [
             'user_id' => 1,
@@ -131,24 +131,24 @@ class PostServiceTest extends TestCase
             'content' => 'This is the updated description',
         ];
 
-        $mockUpdatePost = $this->mockPost($payload);
+        $updatedPost = $this->mockPost($payload);
 
-        $response = $this->postService->update($payload, $mockedPost->id);
+        $response = $this->postService->update($payload, $post->id);
 
         $this->assertInstanceOf(Post::class, $response);
-        $this->assertEquals($mockUpdatePost->user_id, $response->user_id);
-        $this->assertEquals($mockUpdatePost->title, $response->title);
-        $this->assertEquals($mockUpdatePost->description, $response->description);
+        $this->assertEquals($updatedPost->user_id, $response->user_id);
+        $this->assertEquals($updatedPost->title, $response->title);
+        $this->assertEquals($updatedPost->description, $response->description);
     }
 
     public function testCannotUpdateUnAuthorizedPost()
     {
-        $mockedPost = $this->mockPost();
+        $post = $this->mockPost();
 
         $this->post->shouldReceive('findOrFail')
             ->once()
-            ->with($mockedPost->id)
-            ->andReturn($mockedPost);
+            ->with($post->id)
+            ->andReturn($post);
 
         $payload = [
             'user_id' => 2,
@@ -158,20 +158,20 @@ class PostServiceTest extends TestCase
 
         $this->expectException(AuthorizationException::class);
         $this->expectExceptionMessage('This action is unauthorized.');
-        $this->postService->update($payload, $mockedPost->id);
+        $this->postService->update($payload, $post->id);
     }
 
     public function testCannotLikeAPostMoreThanOnce()
     {
-        $mockedPost = $this->mockPost();
+        $post = $this->mockPost();
 
-        $this->postLike->expects('whereUserId')->with($mockedPost->user_id)->andReturnSelf();
-        $this->postLike->expects('wherePostId')->with($mockedPost->id)->andReturnSelf();
+        $this->postLike->expects('whereUserId')->with($post->user_id)->andReturnSelf();
+        $this->postLike->expects('wherePostId')->with($post->id)->andReturnSelf();
         $this->postLike->expects('exists')->andReturnTrue();
 
         $this->expectException(UserAlreadyLikedPostException::class);
 
-        $this->postService->like($mockedPost->user_id, $mockedPost->id);
+        $this->postService->like($post->user_id, $post->id);
     }
 
     /**
@@ -180,18 +180,18 @@ class PostServiceTest extends TestCase
      */
     public function testCanLikePost()
     {
-        $mockedPost = $this->mockPost();
+        $post = $this->mockPost();
 
-        $this->postLike->expects('whereUserId')->with($mockedPost->user_id)->andReturnSelf();
-        $this->postLike->expects('wherePostId')->with($mockedPost->id)->andReturnSelf();
+        $this->postLike->expects('whereUserId')->with($post->user_id)->andReturnSelf();
+        $this->postLike->expects('wherePostId')->with($post->id)->andReturnSelf();
         $this->postLike->expects('exists')->andReturnFalse();
 
         $this->post->shouldReceive('findOrFail')
             ->once()
-            ->with($mockedPost->id)
-            ->andReturn($mockedPost);
+            ->with($post->id)
+            ->andReturn($post);
 
-        $response = $this->postService->like($mockedPost->user_id, $mockedPost->id);
+        $response = $this->postService->like($post->user_id, $post->id);
 
         $this->assertInstanceOf(PostLike::class, $response);
         $this->assertEquals(1, $response->user_id);
@@ -200,14 +200,14 @@ class PostServiceTest extends TestCase
 
     public function testCanDeleteExistingPost()
     {
-        $mockedPost = $this->mockPost();
+        $post = $this->mockPost();
 
         $this->post->shouldReceive('findOrFail')
             ->once()
-            ->with($mockedPost->id)
-            ->andReturn($mockedPost);
+            ->with($post->id)
+            ->andReturn($post);
 
-        $response = $this->postService->delete($mockedPost->id);
+        $response = $this->postService->delete($post->id);
         $this->assertNull($response);
     }
 

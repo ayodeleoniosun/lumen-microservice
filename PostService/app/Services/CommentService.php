@@ -10,9 +10,23 @@ use App\Models\Comment\Comment;
 use App\Models\Comment\CommentLike;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Model;
+use Throwable;
 
 class CommentService implements CommentServiceInterface
 {
+    public Comment $comment;
+    public CommentLike $commentLike;
+
+    /**
+     * @param Comment $comment
+     * @param CommentLike $commentLike
+     */
+    public function __construct(Comment $comment, CommentLike $commentLike)
+    {
+        $this->comment = $comment;
+        $this->commentLike = $commentLike;
+    }
+
     /**
      * Get all comments
      *
@@ -20,7 +34,7 @@ class CommentService implements CommentServiceInterface
      */
     public function index(int $post): CommentCollection
     {
-        return new CommentCollection(Comment::where('post_id', $post)->with('likes')->get());
+        return new CommentCollection($this->comment->wherePostId($post)->with('likes')->get());
     }
 
     /**
@@ -30,7 +44,7 @@ class CommentService implements CommentServiceInterface
      */
     public function create(array $data): Model
     {
-        return Comment::create($data);
+        return $this->comment->create($data);
     }
 
     /**
@@ -40,7 +54,7 @@ class CommentService implements CommentServiceInterface
      */
     public function show(int $comment): CommentResource
     {
-        return new CommentResource(Comment::findOrFail($comment));
+        return new CommentResource($this->comment->findOrFail($comment));
     }
 
     /**
@@ -49,14 +63,13 @@ class CommentService implements CommentServiceInterface
      * @param int $id
      * @return Model
      * @throws AuthorizationException
+     * @throws Throwable
      */
     public function update(array $data, int $id): Model
     {
-        $comment = Comment::findOrFail($id);
+        $comment = $this->comment->findOrFail($id);
 
-        if ((int) $data['user_id'] !== $comment->user_id) {
-            throw new AuthorizationException();
-        }
+        throw_if((int) $data['user_id'] !== $comment->user_id, AuthorizationException::class);
 
         $comment->comment = $data['comment'];
         $comment->save();
@@ -69,19 +82,15 @@ class CommentService implements CommentServiceInterface
      * @param int $id
      * @return Model
      * @throws UserAlreadyLikedCommentException
+     * @throws Throwable
      */
     public function like(int $user, int $id): Model
     {
-        $hasLiked = CommentLike::where([
-            'user_id' => $user,
-            'comment_id' => $id,
-        ])->exists();
+        $hasLiked = $this->commentLike->whereUserId($user)->whereCommentId($id)->exists();
 
-        if ($hasLiked) {
-            throw new UserAlreadyLikedCommentException();
-        }
+        throw_if($hasLiked, UserAlreadyLikedCommentException::class);
 
-        $comment = Comment::findOrFail($id);
+        $comment = $this->comment->findOrFail($id);
 
         return $comment->likes()->create([
             'user_id' => $user,
@@ -94,7 +103,7 @@ class CommentService implements CommentServiceInterface
      */
     public function delete(int $id): void
     {
-        $comment = Comment::findOrFail($id);
+        $comment = $this->comment->findOrFail($id);
         $comment->delete();
     }
 }
