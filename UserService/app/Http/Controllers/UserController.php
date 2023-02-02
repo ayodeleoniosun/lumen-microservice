@@ -7,6 +7,7 @@ use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class UserController extends Controller
@@ -36,20 +37,35 @@ class UserController extends Controller
     }
 
     /**
-     * Create new user
+     * Register new user
      *
+     * @param CreateUserRequest $request
      * @return JsonResponse
      */
-    public function store(CreateUserRequest $request): JsonResponse
+    public function register(CreateUserRequest $request): JsonResponse
     {
-        $response = $this->userService->create($request->validated());
+        $response = $this->userService->register($request->validated());
 
         return $this->success($response, 'Registration successful', Response::HTTP_CREATED);
     }
 
     /**
+     * Register new user
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function login(Request $request): JsonResponse
+    {
+        $response = $this->userService->login($request->all());
+
+        return $this->success($response, 'Login successful');
+    }
+
+    /**
      * get and show details of existing user
      *
+     * @param $user
      * @return JsonResponse
      */
     public function show($user): JsonResponse
@@ -62,6 +78,8 @@ class UserController extends Controller
     /**
      * Update an existing user
      *
+     * @param UpdateUserRequest $request
+     * @param $user
      * @return JsonResponse
      */
     public function update(UpdateUserRequest $request, $user): JsonResponse
@@ -69,17 +87,5 @@ class UserController extends Controller
         $response = $this->userService->update($request->validated(), $user);
 
         return $this->success($response, 'Profile successfully updated');
-    }
-
-    /**
-     * Remove an existing user
-     *
-     * @return JsonResponse
-     */
-    public function destroy($user): JsonResponse
-    {
-        $this->userService->delete($user);
-
-        return $this->deleted();
     }
 }

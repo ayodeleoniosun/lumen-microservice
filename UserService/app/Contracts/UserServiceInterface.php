@@ -9,11 +9,11 @@ interface UserServiceInterface
 {
     public function index(): Collection;
 
-    public function create(array $data): Model;
+    public function register(array $data): Model;
 
-    public function show(int $author): Model;
+    public function login(array $data): array;
+
+    public function show(int $user): Model;
 
     public function update(array $data, int $id): Model;
-
-    public function delete(int $id): void;
 }
