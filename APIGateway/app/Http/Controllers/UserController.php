@@ -34,15 +34,28 @@ class UserController extends Controller
     }
 
     /**
-     * Create new user
+     * Register new user
      *
      * @param Request $request
      * @return Response|ResponseFactory
      */
-    public function store(Request $request): Response|ResponseFactory
+    public function register(Request $request): Response|ResponseFactory
     {
         return $this->success(
-            $this->userService->create($request->all())
+            $this->userService->register($request->all())
+        );
+    }
+
+    /**
+     * Login user
+     *
+     * @param Request $request
+     * @return Response|ResponseFactory
+     */
+    public function login(Request $request): Response|ResponseFactory
+    {
+        return $this->success(
+            $this->userService->login($request->all())
         );
     }
 
@@ -67,18 +80,5 @@ class UserController extends Controller
     public function update(Request $request, $user): Response|ResponseFactory
     {
         return $this->success($this->userService->update($request->all(), $user));
-    }
-
-    /**
-     * Remove an existing user
-     *
-     * @param $user
-     * @return JsonResponse
-     */
-    public function destroy($user): JsonResponse
-    {
-        $this->userService->delete($user);
-
-        return $this->deleted();
     }
 }

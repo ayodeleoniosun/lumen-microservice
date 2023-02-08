@@ -17,11 +17,11 @@ use Laravel\Lumen\Routing\Router;
 
 $router->group(['middleware' => 'client.credentials'], function () use ($router) {
     $router->group(['prefix' => 'users'], function () use ($router) {
+        $router->post('/register', 'UserController@register');
+        $router->post('/login', 'UserController@login');
         $router->get('/', 'UserController@index');
-        $router->post('/', 'UserController@store');
         $router->get('/{user}', 'UserController@show');
         $router->put('/{user}', 'UserController@update');
-        $router->delete('/{user}', 'UserController@destroy');
     });
 
     $router->group(['prefix' => 'posts'], function () use ($router) {

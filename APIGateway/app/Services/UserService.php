@@ -15,8 +15,6 @@ class UserService implements UserServiceInterface
     private string $secret;
 
     /**
-     * @param string $baseUrl
-     * @param string $secret
      */
     public function __construct()
     {
@@ -34,12 +32,23 @@ class UserService implements UserServiceInterface
     }
 
     /**
+     * @param array $data
      * @return string
      * @throws GuzzleException
      */
-    public function create(array $data): string
+    public function register(array $data): string
     {
-        return $this->sendRequest('POST', '/users', $data);
+        return $this->sendRequest('POST', '/register', $data);
+    }
+
+    /**
+     * @param array $data
+     * @return string
+     * @throws GuzzleException
+     */
+    public function login(array $data): string
+    {
+        return $this->sendRequest('POST', '/login', $data);
     }
 
     /**
@@ -58,14 +67,5 @@ class UserService implements UserServiceInterface
     public function update(array $data, int $id): string
     {
         return $this->sendRequest('PUT', "/users/{$id}", $data);
-    }
-
-    /**
-     * @return void
-     * @throws GuzzleException
-     */
-    public function delete(int $id): void
-    {
-        $this->sendRequest('DELETE', "/users/{$id}");
     }
 }

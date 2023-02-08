@@ -6,11 +6,11 @@ interface UserServiceInterface
 {
     public function index(): string;
 
-    public function create(array $data): string;
+    public function register(array $data): string;
+
+    public function login(array $data): string;
 
     public function show(int $author): string;
 
     public function update(array $data, int $id): string;
-
-    public function delete(int $id): void;
 }
