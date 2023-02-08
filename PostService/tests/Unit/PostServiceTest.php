@@ -10,6 +10,7 @@ use App\Models\Post\Post;
 use App\Models\Post\PostLike;
 use App\Services\PostService;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 use Tests\TestCase;
@@ -27,86 +28,48 @@ class PostServiceTest extends TestCase
     protected function setup(): void
     {
         parent::setUp();
-        $this->post = \Mockery::mock(Post::class)->makePartial();
-        $this->postLike = \Mockery::mock(PostLike::class)->makePartial();
+        $this->post = new Post();
+        $this->postLike = new PostLike();
         $this->postService = new PostService($this->post, $this->postLike);
     }
 
     public function testCanReturnAllPosts()
     {
-        $posts = new PostCollection([$this->post]);
-
-        $this->post->expects('with')->with('likes')->andReturnSelf();
-        $this->post->expects('get')->andReturn($posts);
-
+        $posts = $this->createPost();
         $response = $this->postService->index();
+
+        $this->assertEquals(count($posts), $response->resource->count());
         $this->assertInstanceOf(PostCollection::class, $response);
     }
 
     public function testCannotUseExistingDetailsToCreateNewPost()
     {
-        $payload = [
-            'user_id' => 1,
-            'title' => 'This is a new post',
-            'content' => 'This is the description',
-        ];
-
-        $this->post->expects('whereUserId')->with($payload['user_id'])->andReturnSelf();
-        $this->post->expects('whereTitle')->with($payload['title'])->andReturnSelf();
-        $this->post->expects('exists')
-            ->andReturnTrue()
-            ->andThrows(PostExistException::class, 'You have already created this post.');
+        $this->createNewPost();
 
         $this->expectException(PostExistException::class);
-        $this->expectExceptionMessage('You have already created this post.');
-        $this->postService->create($payload);
+        $this->createNewPost();
     }
 
     public function testCanCreateNewPost()
     {
-        $payload = [
-            'user_id' => 1,
-            'title' => 'This is a new post',
-            'content' => 'This is the description',
-        ];
-
-        $post = $this->mockPost();
-
-        $this->post->expects('whereUserId')->with($payload['user_id'])->andReturnSelf();
-        $this->post->expects('whereTitle')->with($payload['title'])->andReturnSelf();
-        $this->post->expects('exists')->andReturnFalse();
-
-        $this->post->expects('create')->andReturn($post);
-
+        $payload = $this->newPostPayload();
         $response = $this->postService->create($payload);
 
         $this->assertInstanceOf(Post::class, $response);
-        $this->assertEquals($post->id, $response->id);
-        $this->assertEquals($post->user_id, $response->user_id);
-        $this->assertEquals($post->title, $response->title);
-        $this->assertEquals($post->content, $response->content);
+        $this->assertEquals($payload['user_id'], $response->user_id);
+        $this->assertEquals($payload['title'], $response->title);
+        $this->assertEquals($payload['content'], $response->content);
     }
 
     public function testCannotShowInvalidPostDetails()
     {
-        $this->post->expects('findOrFail')
-            ->with(1)
-            ->andThrows(ModelNotFoundException::class, 'Post not found');
-
         $this->expectException(ModelNotFoundException::class);
-        $this->expectExceptionMessage('Post not found');
-
         $this->postService->show(1);
     }
 
     public function testCanShowPostDetails()
     {
-        $post = $this->mockPost();
-
-        $this->post->expects('findOrFail')
-            ->with($post->id)
-            ->andReturn($post);
-
+        $post = $this->createNewPost();
         $response = $this->postService->show($post->id);
 
         $this->assertInstanceOf(PostResource::class, $response);
@@ -118,60 +81,34 @@ class PostServiceTest extends TestCase
 
     public function testCanUpdateExistingPost()
     {
-        $post = $this->mockPost();
+        $post = $this->createNewPost();
 
-        $this->post->shouldReceive('findOrFail')
-            ->once()
-            ->with($post->id)
-            ->andReturn($post);
-
-        $payload = [
-            'user_id' => 1,
-            'title' => 'This is an updated post',
-            'content' => 'This is the updated description',
-        ];
-
-        $updatedPost = $this->mockPost($payload);
-
+        $payload = $this->updatePostPayload();
         $response = $this->postService->update($payload, $post->id);
 
         $this->assertInstanceOf(Post::class, $response);
-        $this->assertEquals($updatedPost->user_id, $response->user_id);
-        $this->assertEquals($updatedPost->title, $response->title);
-        $this->assertEquals($updatedPost->description, $response->description);
+        $this->assertEquals($payload['user_id'], $response->user_id);
+        $this->assertEquals($payload['title'], $response->title);
+        $this->assertEquals($payload['content'], $response->content);
     }
 
     public function testCannotUpdateUnAuthorizedPost()
     {
-        $post = $this->mockPost();
-
-        $this->post->shouldReceive('findOrFail')
-            ->once()
-            ->with($post->id)
-            ->andReturn($post);
-
-        $payload = [
-            'user_id' => 2,
-            'title' => 'This is an updated post',
-            'content' => 'This is the updated description',
-        ];
+        $postOne = $this->createNewPost();
+        $payload = $this->updatePostPayload();
+        $payload['user_id'] = 2;
 
         $this->expectException(AuthorizationException::class);
-        $this->expectExceptionMessage('This action is unauthorized.');
-        $this->postService->update($payload, $post->id);
+        $this->postService->update($payload, $postOne->id);
     }
 
     public function testCannotLikeAPostMoreThanOnce()
     {
-        $post = $this->mockPost();
-
-        $this->postLike->expects('whereUserId')->with($post->user_id)->andReturnSelf();
-        $this->postLike->expects('wherePostId')->with($post->id)->andReturnSelf();
-        $this->postLike->expects('exists')->andReturnTrue();
+        $post = $this->createNewPost();
+        $this->postService->like(1, $post->id);
 
         $this->expectException(UserAlreadyLikedPostException::class);
-
-        $this->postService->like($post->user_id, $post->id);
+        $this->postService->like(1, $post->id);
     }
 
     /**
@@ -180,18 +117,8 @@ class PostServiceTest extends TestCase
      */
     public function testCanLikePost()
     {
-        $post = $this->mockPost();
-
-        $this->postLike->expects('whereUserId')->with($post->user_id)->andReturnSelf();
-        $this->postLike->expects('wherePostId')->with($post->id)->andReturnSelf();
-        $this->postLike->expects('exists')->andReturnFalse();
-
-        $this->post->shouldReceive('findOrFail')
-            ->once()
-            ->with($post->id)
-            ->andReturn($post);
-
-        $response = $this->postService->like($post->user_id, $post->id);
+        $post = $this->createNewPost();
+        $response = $this->postService->like(1, $post->id);
 
         $this->assertInstanceOf(PostLike::class, $response);
         $this->assertEquals(1, $response->user_id);
@@ -200,26 +127,34 @@ class PostServiceTest extends TestCase
 
     public function testCanDeleteExistingPost()
     {
-        $post = $this->mockPost();
-
-        $this->post->shouldReceive('findOrFail')
-            ->once()
-            ->with($post->id)
-            ->andReturn($post);
-
+        $post = $this->createNewPost();
         $response = $this->postService->delete($post->id);
         $this->assertNull($response);
     }
 
-    private function mockPost(array|null $data = null): Post
+    private function newPostPayload(): array
     {
-        $post = new Post();
-        $post->id = 1;
-        $post->user_id = $data['user_id'] ?? 1;
-        $post->title = $data['title'] ?? 'This is a new post';
-        $post->content = $data['content'] ?? 'This is the description';
+        return [
+            'user_id' => 1,
+            'title' => 'This is a new post',
+            'content' => 'This is the description',
+        ];
+    }
 
-        return $post;
+    private function updatePostPayload(): array
+    {
+        return [
+            'user_id' => 1,
+            'title' => 'This is an updated post',
+            'content' => 'This is an updated description',
+        ];
+    }
+
+    private function createNewPost(): Model
+    {
+        $payload = $this->newPostPayload();
+
+        return $this->postService->create($payload);
     }
 
     public function tearDown():void
