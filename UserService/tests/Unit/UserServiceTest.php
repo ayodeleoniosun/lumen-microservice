@@ -2,12 +2,15 @@
 
 namespace Tests\Unit;
 
+use App\Contracts\OauthServiceInterface;
 use App\Models\User;
 use App\Services\UserService;
+use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Collection;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
-use Illuminate\Support\Facades\Hash;
 use Laravel\Lumen\Testing\DatabaseMigrations;
+use Laravel\Passport\Passport;
 use Tests\TestCase;
 use Tests\Traits\CreateUser;
 
@@ -22,16 +25,22 @@ class UserServiceTest extends TestCase
     protected function setup(): void
     {
         parent::setUp();
-        $this->user = \Mockery::mock(User::class)->makePartial();
-        $this->userService = new UserService($this->user);
+        $this->user = new User();
+        $this->oauthService = \Mockery::mock(OauthServiceInterface::class)->makePartial();
+        $this->userService = new UserService($this->user, $this->oauthService);
+
+        Passport::actingAs(
+            User::factory()->create(),
+            ['*']
+        );
     }
 
     public function testCanReturnAllUsers()
     {
-        $users = new Collection([$this->user]);
-        $this->user->shouldReceive('all')->once()->andReturn($users);
-
+        $this->createUser(9);
         $response = $this->userService->index();
+
+        $this->assertCount(10, $response);
         $this->assertInstanceOf(Collection::class, $response);
     }
 
@@ -45,112 +54,81 @@ class UserServiceTest extends TestCase
             'password' => 'strong_password'
         ];
 
-        $mockedUser = $this->mockUser();
-
-        Hash::shouldReceive('make')->with($payload['password'])->once()->andReturn('hashed_password');
-
-        $this->user->shouldReceive('create')
-            ->once()
-            ->andReturn($mockedUser);
-
-        $response = $this->userService->create($payload);
+        $response = $this->userService->register($payload);
 
         $this->assertInstanceOf(User::class, $response);
-        $this->assertEquals($mockedUser->id, $response->id);
-        $this->assertEquals($mockedUser->firstname, $response->firstname);
-        $this->assertEquals($mockedUser->lastname, $response->lastname);
-        $this->assertEquals($mockedUser->gender, $response->gender);
-        $this->assertEquals($mockedUser->email, $response->email);
+        $this->assertEquals($payload['firstname'], $response->firstname);
+        $this->assertEquals($payload['lastname'], $response->lastname);
+        $this->assertEquals($payload['gender'], $response->gender);
+        $this->assertEquals($payload['email'], $response->email);
     }
 
     public function testCannotShowInvalidUserDetails()
     {
-        $this->user->shouldReceive('findOrFail')
-            ->once()
-            ->with(1)
-            ->andThrows(ModelNotFoundException::class, 'User not found');
-
         $this->expectException(ModelNotFoundException::class);
-        $this->expectExceptionMessage('User not found');
-
-        $this->userService->show(1);
+        $this->userService->show(2);
     }
 
     public function testCanShowUserDetails()
     {
-        $mockedUser = $this->mockUser();
-
-        $this->user->shouldReceive('findOrFail')
-            ->once()
-            ->with($mockedUser->id)
-            ->andReturn($mockedUser);
-
-        $response = $this->userService->show($mockedUser->id);
+        $user = $this->createNewUser();
+        $response = $this->userService->show($user->id);
 
         $this->assertInstanceOf(User::class, $response);
-        $this->assertEquals($mockedUser->id, $response->id);
-        $this->assertEquals($mockedUser->firstname, $response->firstname);
-        $this->assertEquals($mockedUser->lastname, $response->lastname);
-        $this->assertEquals($mockedUser->gender, $response->gender);
-        $this->assertEquals($mockedUser->email, $response->email);
+
+        $this->assertInstanceOf(User::class, $response);
+        $this->assertEquals($user->id, $response->id);
+        $this->assertEquals($user->firstname, $response->firstname);
+        $this->assertEquals($user->lastname, $response->lastname);
+        $this->assertEquals($user->gender, $response->gender);
+        $this->assertEquals($user->email, $response->email);
     }
+
+    public function testCannotUpdateUnAuthorizedUser()
+    {
+        $payload = $this->updateUserPayload();
+
+        $this->expectException(AuthorizationException::class);
+        $this->userService->update($payload, 3);
+    }
+
 
     public function testCanUpdateExistingUser()
     {
-        $mockedUser = $this->mockUser();
-
-        $this->user->shouldReceive('findOrFail')
-            ->once()
-            ->with($mockedUser->id)
-            ->andReturn($mockedUser);
-
-        $payload = [
-            'firstname' => 'New John',
-            'lastname' => 'New Doe',
-            'gender' => 'female',
-        ];
-
-        $mockUpdateUser = $this->mockUser($payload);
-
-//        $this->app->instance(
-//            User::class,
-//            \Mockery::mock(User::class, function ($mock) use ($mockUpdateUser) {
-//                $mock->shouldReceive('delete')->andReturn($mockUpdateUser);
-//                return $mock;
-//            })
-//        );
-
-        $response = $this->userService->update($payload, $mockedUser->id);
+        $payload = $this->updateUserPayload();
+        $response = $this->userService->update($payload, auth()->user()->id);
 
         $this->assertInstanceOf(User::class, $response);
-        $this->assertEquals($mockUpdateUser->firstname, $response->firstname);
-        $this->assertEquals($mockUpdateUser->lastname, $response->lastname);
-        $this->assertEquals($mockUpdateUser->gender, $response->gender);
+        $this->assertEquals($payload['firstname'], $response->firstname);
+        $this->assertEquals($payload['lastname'], $response->lastname);
+        $this->assertEquals($payload['gender'], $response->gender);
     }
 
-    public function testCanDeleteExistingUser()
+    private function newUserPayload(): array
     {
-        $mockedUser = $this->mockUser();
-
-        $this->user->shouldReceive('findOrFail')
-            ->once()
-            ->with($mockedUser->id)
-            ->andReturn($mockedUser);
-
-        $response = $this->userService->delete($mockedUser->id);
-        $this->assertNull($response);
+        return [
+            'firstname' => 'John',
+            'lastname' => 'Doe',
+            'gender' => 'male',
+            'email' => 'johndoe@gmail.com',
+            'password' => 'strong_password'
+        ];
     }
 
-    private function mockUser(array|null $data = null): User
+    private function updateUserPayload(): array
     {
-        $user = new User();
-        $user->id = 1;
-        $user->firstname = $data['firstname'] ?? 'John';
-        $user->lastname = $data['lastname'] ?? 'Doe';
-        $user->gender = $data['gender'] ?? 'male';
-        $user->email = 'johndoe@gmail.com';
+        return [
+            'firstname' => 'Updated John',
+            'lastname' => 'Updated Doe',
+            'gender' => 'female',
+        ];
+    }
 
-        return $user;
+    private function createNewUser(): Model
+    {
+        $payload = $this->newUserPayload();
+
+        return $this->userService->register($payload);
     }
 
     public function tearDown():void

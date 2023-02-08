@@ -2,8 +2,11 @@
 
 namespace Tests\Feature;
 
+use App\Models\User;
 use Illuminate\Http\Response;
+use Illuminate\Support\Facades\Hash;
 use Laravel\Lumen\Testing\DatabaseMigrations;
+use Laravel\Passport\Passport;
 use Tests\TestCase;
 use Tests\Traits\CreateUser;
 
@@ -15,12 +18,18 @@ class UserControllerTest extends TestCase
     protected function setup(): void
     {
         parent::setUp();
+
+        Passport::actingAs(
+            User::factory()->create(),
+            ['*']
+        );
     }
 
     public function testShouldReturnAllUsers()
     {
-        $this->createUser();
+        $this->createUser(9);
         $response = $this->get($this->baseUrl . '/users');
+
         $data = $this->responseData($response);
 
         $this->assertCount(10, $data->data);
@@ -39,7 +48,7 @@ class UserControllerTest extends TestCase
 
     public function testIncompletePayloadShouldNotCreateNewUser()
     {
-        $response = $this->post($this->baseUrl . '/users', [
+        $response = $this->post($this->baseUrl . '/register', [
             'firstname' => 'ayodele',
             'lastname' => 'oniosun'
         ]);
@@ -47,12 +56,13 @@ class UserControllerTest extends TestCase
         $data = $this->responseData($response);
 
         $this->assertEquals('error', $data->status);
+        $this->assertStringContainsString('The gender field is required.', $data->message);
         $this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
     public function testInvalidGenderShouldNotCreateNewUser()
     {
-        $response = $this->post($this->baseUrl . '/users', [
+        $response = $this->post($this->baseUrl . '/register', [
             'firstname' => 'ayodele',
             'lastname' => 'oniosun',
             'gender' => 'anything'
@@ -67,7 +77,7 @@ class UserControllerTest extends TestCase
 
     public function testInvalidEmailShouldNotCreateNewUser()
     {
-        $response = $this->post($this->baseUrl . '/users', [
+        $response = $this->post($this->baseUrl . '/register', [
             'firstname' => 'ayodele',
             'lastname' => 'oniosun',
             'gender' => 'male',
@@ -83,15 +93,14 @@ class UserControllerTest extends TestCase
 
     public function testExistingEmailShouldNotCreateNewUser()
     {
-        $payload = [
+        $this->post($this->baseUrl . '/register', [
             'firstname' => 'ayodele',
             'lastname' => 'oniosun',
             'gender' => 'male',
             'email' => 'anything@gmail.com',
             'password' => 'password'
-        ];
+        ]);
 
-        $this->post($this->baseUrl . '/users', $payload);
         $data = $this->createNewUserAndReturnData();
 
         $this->assertEquals('error', $data->status);
@@ -108,9 +117,26 @@ class UserControllerTest extends TestCase
         $this->assertResponseStatus(Response::HTTP_CREATED);
     }
 
+//    public function testShouldLoginValidUser()
+//    {
+//        $data = $this->createNewUserAndReturnData();
+//
+//        $response = $this->post($this->baseUrl . '/login', [
+//            'email' => $data->data->email,
+//            'password' => '12345'
+//        ]);
+//
+//        $login = $this->responseData($response);
+//
+//        $this->assertEquals('success', $login->status);
+//        $this->assertEquals('Login successful', $login->message);
+//        $this->assertResponseStatus(Response::HTTP_OK);
+//    }
+
     public function testUserNotFound()
     {
-        $response = $this->get($this->baseUrl . "/users/1");
+        $response = $this->get($this->baseUrl . "/users/100");
+
         $data = $this->responseData($response);
 
         $this->assertEquals('error', $data->status);
@@ -129,55 +155,36 @@ class UserControllerTest extends TestCase
         $this->assertResponseStatus(Response::HTTP_OK);
     }
 
-    public function testShouldNotUpdateInvalidUser()
+    public function testUnAuthorizedToUpdateUser()
     {
-        $data = $this->updateUserAndReturnData(1);
+        $data = $this->updateUserAndReturnData(100);
 
         $this->assertEquals('error', $data->status);
-        $this->assertEquals('User not found', $data->message);
-        $this->assertResponseStatus(Response::HTTP_NOT_FOUND);
+        $this->assertEquals('This action is unauthorized.', $data->message);
+        $this->assertResponseStatus(Response::HTTP_FORBIDDEN);
     }
 
     public function testShouldUpdateUser()
     {
-        $data = $this->createNewUserAndReturnData();
-        $userResponse = $this->updateUserAndReturnData($data->data->id);
+        $userResponse = $this->updateUserAndReturnData(1);
 
         $this->assertEquals('success', $userResponse->status);
         $this->assertEquals('Profile successfully updated', $userResponse->message);
-        $this->assertEquals($data->data->id, $userResponse->data->id);
+        $this->assertEquals(1, $userResponse->data->id);
         $this->assertEquals('updated firstname', $userResponse->data->firstname);
         $this->assertEquals('updated lastname', $userResponse->data->lastname);
         $this->assertEquals('female', $userResponse->data->gender);
         $this->assertResponseStatus(Response::HTTP_OK);
     }
 
-    public function testShouldNotDeleteInvalidUser()
-    {
-        $response = $this->delete($this->baseUrl . "/users/1");
-        $userResponse = $this->responseData($response);
-
-        $this->assertEquals('error', $userResponse->status);
-        $this->assertEquals('User not found', $userResponse->message);
-        $this->assertResponseStatus(Response::HTTP_NOT_FOUND);
-    }
-
-    public function testShouldDeleteUser()
-    {
-        $data = $this->createNewUserAndReturnData();
-        $this->delete($this->baseUrl . "/users/{$data->data->id}");
-
-        $this->assertResponseStatus(Response::HTTP_NO_CONTENT);
-    }
-
     private function createNewUserAndReturnData()
     {
-        $response = $this->post($this->baseUrl . '/users', [
+        $response = $this->post($this->baseUrl . '/register', [
             'firstname' => 'ayodele',
             'lastname' => 'oniosun',
             'gender' => 'male',
             'email' => 'anything@gmail.com',
-            'password' => 'password'
+            'password' => '12345'
         ]);
 
         return $this->responseData($response);
