@@ -9,10 +9,12 @@ use App\Models\Comment\Comment;
 use App\Models\Comment\CommentLike;
 use App\Services\CommentService;
 use Illuminate\Auth\Access\AuthorizationException;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use Tests\Traits\CreateComment;
+use Throwable;
 
 class CommentServiceTest extends TestCase
 {
@@ -26,61 +28,40 @@ class CommentServiceTest extends TestCase
     protected function setup(): void
     {
         parent::setUp();
-        $this->comment = \Mockery::mock(Comment::class)->makePartial();
-        $this->commentLike = \Mockery::mock(CommentLike::class)->makePartial();
+        $this->comment = new Comment();
+        $this->commentLike = new CommentLike();
         $this->commentService = new CommentService($this->comment, $this->commentLike);
     }
 
     public function testCanReturnAllPostComments()
     {
-        $comments = new CommentCollection([$this->comment]);
-        $comment = $this->mockComment();
+        $comments = $this->createComment();
+        $response = $this->commentService->index(1);
 
-        $this->comment->expects('wherePostId')->with($comment->post_id)->andReturnSelf();
-        $this->comment->expects('with')->with('likes')->andReturnSelf();
-        $this->comment->expects('get')->andReturn($comments);
-
-        $response = $this->commentService->index($comment->post_id);
+        $this->assertEquals(count($comments), $response->resource->count());
         $this->assertInstanceOf(CommentCollection::class, $response);
     }
 
     public function testCanCreateNewComment()
     {
-        $payload = [
-            'user_id' => 1,
-        ];
-
-        $comment = $this->mockComment();
-        $this->comment->expects('create')->andReturn($comment);
+        $payload = $this->newCommentPayload();
         $response = $this->commentService->create($payload);
 
         $this->assertInstanceOf(Comment::class, $response);
-        $this->assertEquals($comment->id, $response->id);
-        $this->assertEquals($comment->user_id, $response->user_id);
-        $this->assertEquals($comment->post_id, $response->post_id);
-        $this->assertEquals($comment->comment, $response->comment);
+        $this->assertEquals($payload['user_id'], $response->user_id);
+        $this->assertEquals($payload['post_id'], $response->post_id);
+        $this->assertEquals($payload['comment'], $response->comment);
     }
 
     public function testCannotShowInvalidCommentDetails()
     {
-        $this->comment->expects('findOrFail')
-            ->with(1)
-            ->andThrows(ModelNotFoundException::class, 'Comment not found');
-
         $this->expectException(ModelNotFoundException::class);
-        $this->expectExceptionMessage('Comment not found');
-
         $this->commentService->show(1);
     }
 
     public function testCanShowCommentDetails()
     {
-        $comment = $this->mockComment();
-
-        $this->comment->expects('findOrFail')
-            ->with($comment->id)
-            ->andReturn($comment);
-
+        $comment = $this->createNewComment();
         $response = $this->commentService->show($comment->id);
 
         $this->assertInstanceOf(CommentResource::class, $response);
@@ -92,80 +73,44 @@ class CommentServiceTest extends TestCase
 
     public function testCanUpdateExistingComment()
     {
-        $comment = $this->mockComment();
+        $comment = $this->createNewComment();
 
-        $this->comment->shouldReceive('findOrFail')
-            ->once()
-            ->with($comment->id)
-            ->andReturn($comment);
-
-        $payload = [
-            'user_id' => 1,
-            'post_id' => 1,
-            'comment' => 'This is the updated comment',
-        ];
-
-        $updatedComment = $this->mockComment($payload);
-
+        $payload = $this->updateCommentPayload();
         $response = $this->commentService->update($payload, $comment->id);
 
         $this->assertInstanceOf(Comment::class, $response);
-        $this->assertEquals($updatedComment->user_id, $response->user_id);
-        $this->assertEquals($updatedComment->post_id, $response->post_id);
-        $this->assertEquals($updatedComment->comment, $response->comment);
+        $this->assertEquals($payload['user_id'], $response->user_id);
+        $this->assertEquals($payload['post_id'], $response->post_id);
+        $this->assertEquals($payload['comment'], $response->comment);
     }
 
     public function testCannotUpdateUnAuthorizedComment()
     {
-        $comment = $this->mockComment();
-
-        $this->comment->shouldReceive('findOrFail')
-            ->once()
-            ->with($comment->id)
-            ->andReturn($comment);
-
-        $payload = [
-            'user_id' => 2,
-            'post_id' => 1,
-            'comment' => 'This is the updated comment',
-        ];
+        $commentOne = $this->createNewComment();
+        $payload = $this->updateCommentPayload();
+        $payload['user_id'] = 2;
 
         $this->expectException(AuthorizationException::class);
-        $this->expectExceptionMessage('This action is unauthorized.');
-        $this->commentService->update($payload, $comment->id);
+        $this->commentService->update($payload, $commentOne->id);
     }
 
     public function testCannotLikeACommentMoreThanOnce()
     {
-        $comment = $this->mockComment();
-
-        $this->commentLike->expects('whereUserId')->with($comment->user_id)->andReturnSelf();
-        $this->commentLike->expects('whereCommentId')->with($comment->id)->andReturnSelf();
-        $this->commentLike->expects('exists')->andReturnTrue();
+        $comment = $this->createNewComment();
+        $this->commentService->like(1, $comment->id);
 
         $this->expectException(UserAlreadyLikedCommentException::class);
-
-        $this->commentService->like($comment->user_id, $comment->id);
+        $this->commentService->like(1, $comment->id);
     }
 
     /**
-     * @throws \Throwable
+     * @throws Throwable
      * @throws UserAlreadyLikedCommentException
      */
     public function testCanLikeComment()
     {
-        $comment = $this->mockComment();
-
-        $this->commentLike->expects('whereUserId')->with($comment->user_id)->andReturnSelf();
-        $this->commentLike->expects('whereCommentId')->with($comment->id)->andReturnSelf();
-        $this->commentLike->expects('exists')->andReturnFalse();
-
-        $this->comment->shouldReceive('findOrFail')
-            ->once()
-            ->with($comment->id)
-            ->andReturn($comment);
-
-        $response = $this->commentService->like($comment->user_id, $comment->id);
+        $comment = $this->createNewComment();
+        $response = $this->commentService->like(1, $comment->id);
 
         $this->assertInstanceOf(CommentLike::class, $response);
         $this->assertEquals(1, $response->user_id);
@@ -174,26 +119,32 @@ class CommentServiceTest extends TestCase
 
     public function testCanDeleteExistingComment()
     {
-        $comment = $this->mockComment();
-
-        $this->comment->shouldReceive('findOrFail')
-            ->once()
-            ->with($comment->id)
-            ->andReturn($comment);
-
+        $comment = $this->createNewComment();
         $response = $this->commentService->delete($comment->id);
         $this->assertNull($response);
     }
 
-    private function mockComment(array|null $data = null): Comment
+    private function newCommentPayload(): array
     {
-        $comment = new Comment();
-        $comment->id = 1;
-        $comment->user_id = $data['user_id'] ?? 1;
-        $comment->post_id = $data['post_id'] ?? 1;
-        $comment->comment = $data['comment'] ?? 'This is the comment';
+        return [
+            'user_id' => 1,
+            'post_id' => 1,
+            'comment' => 'This is the comment',
+        ];
+    }
 
-        return $comment;
+    private function updateCommentPayload(): array
+    {
+        $payload = $this->newCommentPayload();
+        $payload['comment'] = 'This is the updated comment';
+        return $payload;
+    }
+
+    private function createNewComment(): Model
+    {
+        $payload = $this->newCommentPayload();
+
+        return $this->commentService->create($payload);
     }
 
     public function tearDown():void

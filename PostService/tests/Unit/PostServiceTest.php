@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 use Tests\TestCase;
 use Tests\Traits\CreatePost;
+use Throwable;
 
 class PostServiceTest extends TestCase
 {
@@ -112,7 +113,7 @@ class PostServiceTest extends TestCase
     }
 
     /**
-     * @throws \Throwable
+     * @throws Throwable
      * @throws UserAlreadyLikedPostException
      */
     public function testCanLikePost()
@@ -143,11 +144,11 @@ class PostServiceTest extends TestCase
 
     private function updatePostPayload(): array
     {
-        return [
-            'user_id' => 1,
-            'title' => 'This is an updated post',
-            'content' => 'This is an updated description',
-        ];
+        $payload = $this->newPostPayload();
+        $payload['title'] = 'This is an updated post';
+        $payload['content'] = 'This is an updated description';
+
+        return $payload;
     }
 
     private function createNewPost(): Model
