@@ -22,15 +22,11 @@ class CommentServiceTest extends TestCase
     use DatabaseMigrations;
 
     public CommentService $commentService;
-    public Comment $comment;
-    public CommentLike $commentLike;
 
     protected function setup(): void
     {
         parent::setUp();
-        $this->comment = new Comment();
-        $this->commentLike = new CommentLike();
-        $this->commentService = new CommentService($this->comment, $this->commentLike);
+        $this->commentService = new CommentService();
     }
 
     public function testCanReturnAllPostComments()

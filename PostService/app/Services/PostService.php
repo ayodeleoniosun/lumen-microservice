@@ -15,19 +15,6 @@ use Throwable;
 
 class PostService implements PostServiceInterface
 {
-    public Post $post;
-    public PostLike $postLike;
-
-    /**
-     * @param Post $post
-     * @param PostLike $postLike
-     */
-    public function __construct(Post $post, PostLike $postLike)
-    {
-        $this->post = $post;
-        $this->postLike = $postLike;
-    }
-
     /**
      * Get all posts
      *
@@ -35,7 +22,7 @@ class PostService implements PostServiceInterface
      */
     public function index(): PostCollection
     {
-        return new PostCollection($this->post->with('likes')->get());
+        return new PostCollection(Post::with('likes')->get());
     }
 
     /**
@@ -47,11 +34,11 @@ class PostService implements PostServiceInterface
      */
     public function create(array $data): Model
     {
-        $postExist = $this->post->whereUserId($data['user_id'])->whereTitle($data['title'])->exists();
+        $postExist = Post::whereUserId($data['user_id'])->whereTitle($data['title'])->exists();
 
         throw_if($postExist, PostExistException::class);
 
-        return $this->post->create($data);
+        return Post::create($data);
     }
 
     /**
@@ -61,7 +48,7 @@ class PostService implements PostServiceInterface
      */
     public function show(int $post): PostResource
     {
-        return new PostResource($this->post->findOrFail($post));
+        return new PostResource(Post::findOrFail($post));
     }
 
     /**
@@ -73,7 +60,7 @@ class PostService implements PostServiceInterface
      */
     public function update(array $data, int $id): Model
     {
-        $post = $this->post->findOrFail($id);
+        $post = Post::findOrFail($id);
 
         throw_if((int) $data['user_id'] !== $post->user_id, AuthorizationException::class);
 
@@ -93,11 +80,11 @@ class PostService implements PostServiceInterface
      */
     public function like(int $user, int $id): Model
     {
-        $hasLiked = $this->postLike->whereUserId($user)->wherePostId($id)->exists();
+        $hasLiked = PostLike::whereUserId($user)->wherePostId($id)->exists();
 
         throw_if($hasLiked, UserAlreadyLikedPostException::class);
 
-        $post = $this->post->findOrFail($id);
+        $post = Post::findOrFail($id);
 
         return $post->likes()->create([
             'user_id' => $user,
@@ -111,7 +98,7 @@ class PostService implements PostServiceInterface
      */
     public function delete(int $id): void
     {
-        $post = $this->post->findOrFail($id);
+        $post = Post::findOrFail($id);
         $post->delete();
     }
 }

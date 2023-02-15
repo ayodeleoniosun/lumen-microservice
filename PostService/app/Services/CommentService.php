@@ -14,18 +14,6 @@ use Throwable;
 
 class CommentService implements CommentServiceInterface
 {
-    public Comment $comment;
-    public CommentLike $commentLike;
-
-    /**
-     * @param Comment $comment
-     * @param CommentLike $commentLike
-     */
-    public function __construct(Comment $comment, CommentLike $commentLike)
-    {
-        $this->comment = $comment;
-        $this->commentLike = $commentLike;
-    }
 
     /**
      * Get all comments
@@ -34,7 +22,7 @@ class CommentService implements CommentServiceInterface
      */
     public function index(int $post): CommentCollection
     {
-        return new CommentCollection($this->comment->wherePostId($post)->with('likes')->get());
+        return new CommentCollection(Comment::wherePostId($post)->with('likes')->get());
     }
 
     /**
@@ -44,7 +32,7 @@ class CommentService implements CommentServiceInterface
      */
     public function create(array $data): Model
     {
-        return $this->comment->create($data);
+        return Comment::create($data);
     }
 
     /**
@@ -54,7 +42,7 @@ class CommentService implements CommentServiceInterface
      */
     public function show(int $comment): CommentResource
     {
-        return new CommentResource($this->comment->findOrFail($comment));
+        return new CommentResource(Comment::findOrFail($comment));
     }
 
     /**
@@ -67,7 +55,7 @@ class CommentService implements CommentServiceInterface
      */
     public function update(array $data, int $id): Model
     {
-        $comment = $this->comment->findOrFail($id);
+        $comment = Comment::findOrFail($id);
 
         throw_if((int) $data['user_id'] !== $comment->user_id, AuthorizationException::class);
 
@@ -86,11 +74,11 @@ class CommentService implements CommentServiceInterface
      */
     public function like(int $user, int $id): Model
     {
-        $hasLiked = $this->commentLike->whereUserId($user)->whereCommentId($id)->exists();
+        $hasLiked = CommentLike::whereUserId($user)->whereCommentId($id)->exists();
 
         throw_if($hasLiked, UserAlreadyLikedCommentException::class);
 
-        $comment = $this->comment->findOrFail($id);
+        $comment = Comment::findOrFail($id);
 
         return $comment->likes()->create([
             'user_id' => $user,
@@ -103,7 +91,7 @@ class CommentService implements CommentServiceInterface
      */
     public function delete(int $id): void
     {
-        $comment = $this->comment->findOrFail($id);
+        $comment = Comment::findOrFail($id);
         $comment->delete();
     }
 }

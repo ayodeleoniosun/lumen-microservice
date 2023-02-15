@@ -23,15 +23,11 @@ class PostServiceTest extends TestCase
     use DatabaseMigrations;
 
     public PostService $postService;
-    public Post $post;
-    public PostLike $postLike;
 
     protected function setup(): void
     {
         parent::setUp();
-        $this->post = new Post();
-        $this->postLike = new PostLike();
-        $this->postService = new PostService($this->post, $this->postLike);
+        $this->postService = new PostService();
     }
 
     public function testCanReturnAllPosts()
