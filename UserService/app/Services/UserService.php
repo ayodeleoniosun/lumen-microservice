@@ -15,17 +15,13 @@ use Throwable;
 
 class UserService implements UserServiceInterface
 {
-    public User $user;
-
     public OauthServiceInterface $oauthService;
 
     /**
-     * @param User $user
      * @param OauthServiceInterface $oauthService
      */
-    public function __construct(User $user, OauthServiceInterface $oauthService)
+    public function __construct(OauthServiceInterface $oauthService)
     {
-        $this->user = $user;
         $this->oauthService = $oauthService;
     }
 
@@ -36,7 +32,7 @@ class UserService implements UserServiceInterface
      */
     public function index(): Collection
     {
-        return $this->user->all();
+        return User::all();
     }
 
     /**
@@ -50,7 +46,7 @@ class UserService implements UserServiceInterface
         $data['password'] = Hash::make($data['password']);
         $data['email_verified_at'] = Carbon::now()->toDateTimeString();
 
-        return $this->user->create($data);
+        return User::create($data);
     }
 
     /**
@@ -62,23 +58,13 @@ class UserService implements UserServiceInterface
      */
     public function login(array $data): array
     {
-        $user = $this->user->whereEmail($data['email'])->first();
+        $user = User::whereEmail($data['email'])->first();
 
-        throw_if((! $user || ! Hash::check($data['password'], $user->password)), InvalidLoginException::class);
+        throw_if((!$user || !Hash::check($data['password'], $user->password)), InvalidLoginException::class);
 
         $token = $this->oauthService->generateToken($data);
 
         return compact('user', 'token');
-    }
-
-    /**
-     *  Show user details
-     * @param int $user
-     * @return Model
-     */
-    public function show(int $user): Model
-    {
-        return $this->user->findOrFail($user);
     }
 
     /**
@@ -101,5 +87,15 @@ class UserService implements UserServiceInterface
         $user->save();
 
         return $user;
+    }
+
+    /**
+     *  Show user details
+     * @param int $user
+     * @return Model
+     */
+    public function show(int $user): Model
+    {
+        return User::findOrFail($user);
     }
 }

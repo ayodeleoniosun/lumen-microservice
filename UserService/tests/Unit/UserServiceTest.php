@@ -20,14 +20,12 @@ class UserServiceTest extends TestCase
     use DatabaseMigrations;
 
     public UserService $userService;
-    public User $user;
 
-    protected function setup(): void
+    public function setup(): void
     {
         parent::setUp();
-        $this->user = new User();
         $this->oauthService = \Mockery::mock(OauthServiceInterface::class)->makePartial();
-        $this->userService = new UserService($this->user, $this->oauthService);
+        $this->userService = new UserService($this->oauthService);
 
         Passport::actingAs(
             User::factory()->create(),
@@ -84,24 +82,11 @@ class UserServiceTest extends TestCase
         $this->assertEquals($user->email, $response->email);
     }
 
-    public function testCannotUpdateUnAuthorizedUser()
+    private function createNewUser(): Model
     {
-        $payload = $this->updateUserPayload();
+        $payload = $this->newUserPayload();
 
-        $this->expectException(AuthorizationException::class);
-        $this->userService->update($payload, 3);
-    }
-
-
-    public function testCanUpdateExistingUser()
-    {
-        $payload = $this->updateUserPayload();
-        $response = $this->userService->update($payload, auth()->user()->id);
-
-        $this->assertInstanceOf(User::class, $response);
-        $this->assertEquals($payload['firstname'], $response->firstname);
-        $this->assertEquals($payload['lastname'], $response->lastname);
-        $this->assertEquals($payload['gender'], $response->gender);
+        return $this->userService->register($payload);
     }
 
     private function newUserPayload(): array
@@ -115,6 +100,14 @@ class UserServiceTest extends TestCase
         ];
     }
 
+    public function testCannotUpdateUnAuthorizedUser()
+    {
+        $payload = $this->updateUserPayload();
+
+        $this->expectException(AuthorizationException::class);
+        $this->userService->update($payload, 3);
+    }
+
     private function updateUserPayload(): array
     {
         return [
@@ -124,14 +117,18 @@ class UserServiceTest extends TestCase
         ];
     }
 
-    private function createNewUser(): Model
+    public function testCanUpdateExistingUser()
     {
-        $payload = $this->newUserPayload();
+        $payload = $this->updateUserPayload();
+        $response = $this->userService->update($payload, auth()->user()->id);
 
-        return $this->userService->register($payload);
+        $this->assertInstanceOf(User::class, $response);
+        $this->assertEquals($payload['firstname'], $response->firstname);
+        $this->assertEquals($payload['lastname'], $response->lastname);
+        $this->assertEquals($payload['gender'], $response->gender);
     }
 
-    public function tearDown():void
+    public function tearDown(): void
     {
         \Mockery::close();
         parent::tearDown();

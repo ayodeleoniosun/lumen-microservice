@@ -15,10 +15,8 @@
 $router->post('/register', 'UserController@register');
 $router->post('/login', 'UserController@login');
 
-$router->group(['middleware' => 'auth'], function () use ($router) {
-    $router->group(['prefix' => 'users'], function () use ($router) {
-        $router->get('/', 'UserController@index');
-        $router->get('/{user}', 'UserController@show');
-        $router->put('/{user}', 'UserController@update');
-    });
+$router->group(['prefix' => 'users'], function () use ($router) {
+    $router->get('/', 'UserController@index');
+    $router->get('/{user}', 'UserController@show');
+    $router->put('/{user}', 'UserController@update');
 });
