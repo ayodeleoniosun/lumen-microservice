@@ -13,7 +13,7 @@
 |
 */
 
-$router->group(['prefix' => 'posts'], function () use ($router) {
+$router->group(['prefix' => 'posts', 'middleware' => 'api_token.access'], function () use ($router) {
     $router->get('/', 'PostController@index');
     $router->post('/', 'PostController@store');
     $router->get('/{post}', 'PostController@show');

@@ -2,11 +2,11 @@
 
 namespace App\Providers;
 
-use App\Contracts\UserServiceInterface;
-use App\Services\UserService;
+use App\Contracts\AuthServiceInterface;
+use App\Services\AuthService;
 use Illuminate\Support\ServiceProvider;
 
-class UserServiceProvider extends ServiceProvider
+class CustomAuthServiceProvider extends ServiceProvider
 {
     /**
      * Register any application services.
@@ -16,8 +16,8 @@ class UserServiceProvider extends ServiceProvider
     public function register()
     {
         $this->app->bind(
-            UserServiceInterface::class,
-            UserService::class
+            AuthServiceInterface::class,
+            AuthService::class
         );
     }
 

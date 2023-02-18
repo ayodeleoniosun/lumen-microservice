@@ -5,14 +5,17 @@ namespace App\Traits;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Response as FacadeResponse;
-use Laravel\Lumen\Http\ResponseFactory;
 use Symfony\Component\HttpFoundation\Response as ResponseAlias;
 
 trait ApiResponseTrait
 {
-    public function success($data, int $statusCode = ResponseAlias::HTTP_OK): Response|ResponseFactory
+    public function success($data, string $message = '', int $statusCode = Response::HTTP_OK)
     {
-        return response($data, $statusCode)->header('Content-Type', 'application/json');
+        return FacadeResponse::json([
+            'status' => 'success',
+            'message' => $message,
+            'data' => json_decode($data),
+        ], $statusCode);
     }
 
     public function deleted(int $statusCode = ResponseAlias::HTTP_NO_CONTENT): JsonResponse

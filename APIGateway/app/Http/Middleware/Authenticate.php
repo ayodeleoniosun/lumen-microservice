@@ -4,20 +4,22 @@ namespace App\Http\Middleware;
 
 use Closure;
 use Illuminate\Contracts\Auth\Factory as Auth;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Response;
 
 class Authenticate
 {
     /**
      * The authentication guard factory instance.
      *
-     * @var \Illuminate\Contracts\Auth\Factory
+     * @var Auth
      */
     protected $auth;
 
     /**
      * Create a new middleware instance.
      *
-     * @param  \Illuminate\Contracts\Auth\Factory  $auth
+     * @param Auth $auth
      * @return void
      */
     public function __construct(Auth $auth)
@@ -28,15 +30,18 @@ class Authenticate
     /**
      * Handle an incoming request.
      *
-     * @param  \Illuminate\Http\Request  $request
+     * @param  Request  $request
      * @param  \Closure  $next
-     * @param  string|null  $guard
+     * @param string|null $guard
      * @return mixed
      */
-    public function handle($request, Closure $next, $guard = null)
+    public function handle(Request $request, Closure $next, string $guard = null): mixed
     {
         if ($this->auth->guard($guard)->guest()) {
-            return response('Unauthorized.', 401);
+            return Response::json([
+                'status' => 'error',
+                'message' => 'Unauthenticated'
+            ], 401);
         }
 
         return $next($request);

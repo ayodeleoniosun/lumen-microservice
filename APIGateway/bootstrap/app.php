@@ -79,8 +79,7 @@ $app->configure('auth');
 // ]);
 
 $app->routeMiddleware([
-//    'auth' => App\Http\Middleware\Authenticate::class,
-    'client.credentials' => \Laravel\Passport\Http\Middleware\CheckClientCredentials::class
+    'auth' => App\Http\Middleware\Authenticate::class,
 ]);
 
 /*
@@ -99,7 +98,8 @@ $app->register(App\Providers\AuthServiceProvider::class);
 $app->register(App\Providers\EventServiceProvider::class);
 $app->register(App\Providers\PostServiceProvider::class);
 $app->register(App\Providers\CommentServiceProvider::class);
-$app->register(App\Providers\UserServiceProvider::class);
+$app->register(App\Providers\CustomAuthServiceProvider::class);
+$app->register(App\Providers\OauthServiceProvider::class);
 $app->register(Laravel\Passport\PassportServiceProvider::class);
 $app->register(Dusterio\LumenPassport\PassportServiceProvider::class);
 

@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Contracts\PostServiceInterface;
 use App\Contracts\CommentServiceInterface;
-use App\Contracts\UserServiceInterface;
+use App\Contracts\AuthServiceInterface;
 use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -19,14 +19,14 @@ class CommentController extends Controller
 
     public PostServiceInterface $postService;
 
-    public UserServiceInterface $userService;
+    public AuthServiceInterface $userService;
 
     /**
      * @param CommentServiceInterface $commentService
      * @param PostServiceInterface $postService
-     * @param UserServiceInterface $userService
+     * @param AuthServiceInterface $userService
      */
-    public function __construct(CommentServiceInterface $commentService, PostServiceInterface $postService, UserServiceInterface $userService)
+    public function __construct(CommentServiceInterface $commentService, PostServiceInterface $postService, AuthServiceInterface $userService)
     {
         $this->commentService = $commentService;
         $this->postService = $postService;

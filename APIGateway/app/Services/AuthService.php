@@ -6,6 +6,8 @@ use App\Contracts\AuthServiceInterface;
 use App\Contracts\OauthServiceInterface;
 use App\Exceptions\InvalidLoginException;
 use App\Models\User;
+use App\Traits\ConsumeExternalServiceTrait;
+use GuzzleHttp\Exception\GuzzleException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -15,7 +17,13 @@ use Throwable;
 
 class AuthService implements AuthServiceInterface
 {
+    use ConsumeExternalServiceTrait;
+
     public OauthServiceInterface $oauthService;
+
+    private string $baseUrl;
+
+    private string $secret;
 
     /**
      * @param OauthServiceInterface $oauthService
@@ -36,8 +44,6 @@ class AuthService implements AuthServiceInterface
     }
 
     /**
-     * Create new user
-     *
      * @param array $data
      * @return Model
      */
@@ -50,10 +56,9 @@ class AuthService implements AuthServiceInterface
     }
 
     /**
-     * Create new user
-     *
      * @param array $data
      * @return array
+     * @throws GuzzleException
      * @throws Throwable
      */
     public function login(array $data): array
@@ -65,6 +70,16 @@ class AuthService implements AuthServiceInterface
         $token = $this->oauthService->generateToken($data);
 
         return compact('user', 'token');
+    }
+
+    /**
+     *  Show user details
+     * @param int $user
+     * @return Model
+     */
+    public function show(int $user): Model
+    {
+        return User::findOrFail($user);
     }
 
     /**
@@ -89,13 +104,4 @@ class AuthService implements AuthServiceInterface
         return $user;
     }
 
-    /**
-     *  Show user details
-     * @param int $user
-     * @return Model
-     */
-    public function show(int $user): Model
-    {
-        return User::findOrFail($user);
-    }
 }

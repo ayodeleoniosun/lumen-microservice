@@ -9,12 +9,13 @@ use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
+use Laravel\Lumen\Http\ResponseFactory;
 
 class AuthController extends Controller
 {
     use ApiResponseTrait;
 
-    protected AuthServiceInterface $authService;
+    public AuthServiceInterface $authService;
 
     /**
      * @param AuthServiceInterface $authService
@@ -50,7 +51,7 @@ class AuthController extends Controller
     }
 
     /**
-     * Register new user
+     * Login user
      *
      * @param Request $request
      * @return JsonResponse

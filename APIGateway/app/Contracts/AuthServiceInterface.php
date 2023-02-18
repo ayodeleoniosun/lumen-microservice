@@ -13,7 +13,7 @@ interface AuthServiceInterface
 
     public function login(array $data): array;
 
-    public function show(int $user): Model;
+    public function show(int $author): Model;
 
     public function update(array $data, int $id): Model;
 }
