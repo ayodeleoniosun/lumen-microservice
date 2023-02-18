@@ -27,6 +27,7 @@ abstract class TestCase extends BaseTestCase
 
     protected function responseData($response, $key = 'all')
     {
+
         if ($key == 'all') {
             return json_decode($response->response->content());
         }

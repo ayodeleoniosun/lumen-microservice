@@ -96,7 +96,6 @@ $app->configure('services');
  $app->register(App\Providers\AuthServiceProvider::class);
  $app->register(App\Providers\EventServiceProvider::class);
  $app->register(App\Providers\PostServiceProvider::class);
-$app->register(App\Providers\CommentServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------

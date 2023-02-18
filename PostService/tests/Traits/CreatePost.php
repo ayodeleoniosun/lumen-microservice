@@ -2,7 +2,7 @@
 
 namespace Tests\Traits;
 
-use App\Models\Post\Post;
+use App\Models\Post;
 
 trait CreatePost
 {

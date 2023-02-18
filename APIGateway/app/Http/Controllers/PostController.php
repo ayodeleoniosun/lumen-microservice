@@ -8,7 +8,6 @@ use App\Traits\ApiResponseTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
-use Laravel\Lumen\Http\ResponseFactory;
 
 class PostController extends Controller
 {

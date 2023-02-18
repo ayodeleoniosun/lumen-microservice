@@ -18,18 +18,6 @@ $router->group(['prefix' => 'posts', 'middleware' => 'api_token.access'], functi
     $router->post('/', 'PostController@store');
     $router->get('/{post}', 'PostController@show');
     $router->put('/{post}', 'PostController@update');
-    $router->delete('/{post}', 'PostController@destroy');
-
+    $router->get('/delete/{post}', 'PostController@destroy');
     $router->post('/{post}/like', 'PostController@like');
-});
-
-
-$router->group(['prefix' => 'comments'], function () use ($router) {
-    $router->get('/posts/{post}', 'CommentController@index');
-    $router->post('/', 'CommentController@store');
-    $router->get('/{comment}', 'CommentController@show');
-    $router->put('/{comment}', 'CommentController@update');
-    $router->delete('/{comment}', 'CommentController@destroy');
-
-    $router->post('/{comment}/like', 'CommentController@like');
 });

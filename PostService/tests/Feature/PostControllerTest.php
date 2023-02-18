@@ -16,26 +16,23 @@ class PostControllerTest extends TestCase
     protected function setup(): void
     {
         parent::setUp();
+
         $this->userId = 1;
     }
 
     public function testShouldReturnAllPosts()
     {
         $this->createPost();
-        $response = $this->get($this->baseUrl . '/posts');
+        $response = $this->get($this->baseUrl . '/posts', $this->withHeaders());
         $data = $this->responseData($response);
 
-        $this->assertCount(10, $data->data);
-        $this->assertEquals('success', $data->status);
+        $this->assertCount(10, $data);
 
         $response->assertResponseOk();
         $response->seeJsonStructure([
-            'status', 'message',
-            'data' => [
-                '*' => [
-                    'id', 'user_id', 'title', 'content', 'count_likes', 'created_at', 'updated_at'
-                ]
-            ],
+            '*' => [
+                'id', 'user_id', 'title', 'content', 'count_likes', 'created_at', 'updated_at'
+            ]
         ]);
     }
 
@@ -44,7 +41,7 @@ class PostControllerTest extends TestCase
         $response = $this->post($this->baseUrl . '/posts', [
             'user_id' => $this->userId,
             'title' => 'this is a new post',
-        ]);
+        ], $this->withHeaders());
 
         $data = $this->responseData($response);
 
@@ -56,7 +53,7 @@ class PostControllerTest extends TestCase
     public function testExistingRecordShouldNotCreateNewPost()
     {
         $payload = $this->newPostPayload();
-        $this->post($this->baseUrl . '/posts', $payload);
+        $this->post($this->baseUrl . '/posts', $payload, $this->withHeaders());
         $data = $this->createNewPostAndReturnData($payload);
 
         $this->assertEquals('error', $data->status);
@@ -69,17 +66,14 @@ class PostControllerTest extends TestCase
         $payload = $this->newPostPayload();
         $data = $this->createNewPostAndReturnData($payload);
 
-        $this->assertEquals('success', $data->status);
-        $this->assertEquals('Post successfully created', $data->message);
-        $this->assertEquals($payload['user_id'], $data->data->user_id);
-        $this->assertEquals($payload['title'], $data->data->title);
-        $this->assertEquals($payload['content'], $data->data->content);
-        $this->assertResponseStatus(Response::HTTP_CREATED);
+        $this->assertEquals($payload['user_id'], $data->user_id);
+        $this->assertEquals($payload['title'], $data->title);
+        $this->assertEquals($payload['content'], $data->content);
     }
 
     public function testPostNotFound()
     {
-        $response = $this->get($this->baseUrl . "/posts/1");
+        $response = $this->get($this->baseUrl . "/posts/1", $this->withHeaders());
         $data = $this->responseData($response);
 
         $this->assertEquals('error', $data->status);
@@ -92,14 +86,12 @@ class PostControllerTest extends TestCase
         $payload = $this->newPostPayload();
         $data = $this->createNewPostAndReturnData($payload);
 
-        $response = $this->get($this->baseUrl . "/posts/{$data->data->id}");
+        $response = $this->get($this->baseUrl . "/posts/{$data->id}", $this->withHeaders());
         $postResponse = $this->responseData($response);
 
-        $this->assertEquals('success', $postResponse->status);
-        $this->assertEquals($data->data->id, $postResponse->data->id);
-        $this->assertEquals($data->data->title, $postResponse->data->title);
-        $this->assertEquals($data->data->content, $postResponse->data->content);
-        $this->assertResponseStatus(Response::HTTP_OK);
+        $this->assertEquals($data->id, $postResponse->id);
+        $this->assertEquals($data->title, $postResponse->title);
+        $this->assertEquals($data->content, $postResponse->content);
     }
 
     public function testShouldNotUpdateInvalidPost()
@@ -119,13 +111,11 @@ class PostControllerTest extends TestCase
 
         $payload['title'] = 'this is the updated post';
         $payload['content'] = 'this is the updated description';
-        $postResponse = $this->updatePostAndReturnData($data->data->id, $payload);
+        $postResponse = $this->updatePostAndReturnData($data->id, $payload);
 
-        $this->assertEquals('success', $postResponse->status);
-        $this->assertEquals('Post successfully updated', $postResponse->message);
-        $this->assertEquals($data->data->id, $postResponse->data->id);
-        $this->assertEquals('this is the updated post', $postResponse->data->title);
-        $this->assertEquals('this is the updated description', $postResponse->data->content);
+        $this->assertEquals($data->id, $postResponse->id);
+        $this->assertEquals('this is the updated post', $postResponse->title);
+        $this->assertEquals('this is the updated description', $postResponse->content);
         $this->assertResponseStatus(Response::HTTP_OK);
     }
 
@@ -143,8 +133,8 @@ class PostControllerTest extends TestCase
         $payload = $this->newPostPayload();
         $post = $this->createNewPostAndReturnData($payload);
 
-        $this->likePostAndReturnData($post->data->id);
-        $postResponse = $this->likePostAndReturnData($post->data->id);
+        $this->likePostAndReturnData($post->id);
+        $postResponse = $this->likePostAndReturnData($post->id);
 
         $this->assertEquals('error', $postResponse->status);
         $this->assertEquals('You have already liked this post.', $postResponse->message);
@@ -155,18 +145,15 @@ class PostControllerTest extends TestCase
     {
         $payload = $this->newPostPayload();
         $post = $this->createNewPostAndReturnData($payload);
-        $postResponse = $this->likePostAndReturnData($post->data->id);
+        $postResponse = $this->likePostAndReturnData($post->id);
 
-        $this->assertEquals('success', $postResponse->status);
-        $this->assertEquals('Post liked', $postResponse->message);
-        $this->assertEquals($post->data->id, $postResponse->data->post_id);
-        $this->assertEquals(1, $postResponse->data->user_id);
-        $this->assertResponseStatus(Response::HTTP_CREATED);
+        $this->assertEquals($post->id, $postResponse->post_id);
+        $this->assertEquals(1, $postResponse->user_id);
     }
 
     public function testShouldNotDeleteInvalidPost()
     {
-        $response = $this->delete($this->baseUrl . "/posts/1");
+        $response = $this->get($this->baseUrl . "/posts/delete/1", $this->withHeaders());
         $postResponse = $this->responseData($response);
 
         $this->assertEquals('error', $postResponse->status);
@@ -178,20 +165,20 @@ class PostControllerTest extends TestCase
     {
         $payload = $this->newPostPayload();
         $data = $this->createNewPostAndReturnData($payload);
-        $this->delete($this->baseUrl . "/posts/{$data->data->id}");
+        $this->get($this->baseUrl . "/posts/delete/{$data->id}", $this->withHeaders());
 
         $this->assertResponseStatus(Response::HTTP_NO_CONTENT);
     }
 
     private function createNewPostAndReturnData(array $payload)
     {
-        $response = $this->post($this->baseUrl . '/posts', $payload);
+        $response = $this->post($this->baseUrl . '/posts', $payload, $this->withHeaders());
         return $this->responseData($response);
     }
 
     private function updatePostAndReturnData(int $id, array $payload)
     {
-        $response = $this->put($this->baseUrl . "/posts/{$id}", $payload);
+        $response = $this->put($this->baseUrl . "/posts/{$id}", $payload, $this->withHeaders());
         return $this->responseData($response);
     }
 
@@ -199,7 +186,7 @@ class PostControllerTest extends TestCase
     {
         $response = $this->post($this->baseUrl . "/posts/{$id}/like", [
             'user_id' => 1,
-        ]);
+        ], $this->withHeaders());
 
         return $this->responseData($response);
     }
@@ -210,6 +197,13 @@ class PostControllerTest extends TestCase
             'user_id' => $this->userId,
             'title' => 'this is a new post',
             'content' => 'this is a new post description',
+        ];
+    }
+
+    private function withHeaders(): array {
+        return [
+            'x-api-key' => config('services.api_token.secret'),
+            'Accept' => 'application/json'
         ];
     }
 

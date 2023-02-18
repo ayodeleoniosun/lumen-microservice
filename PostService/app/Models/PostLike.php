@@ -1,19 +1,19 @@
 <?php
 
-namespace App\Models\Comment;
+namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class CommentLike extends Model
+class PostLike extends Model
 {
     use HasFactory;
 
     protected $guarded = ['id'];
 
-    public function comment(): BelongsTo
+    public function post(): BelongsTo
     {
-        return $this->belongsTo(Comment::class);
+        return $this->belongsTo(Post::class);
     }
 }

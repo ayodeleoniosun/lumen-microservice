@@ -31,7 +31,7 @@ $router->group(['middleware' => 'auth'], function () use ($router) {
         $router->get('/{post}', 'PostController@show');
         $router->put('/{post}', 'PostController@update');
         $router->post('/{post}/like', 'PostController@like');
-        $router->delete('/{post}', 'PostController@destroy');
+        $router->get('/delete/{post}', 'PostController@destroy');
     });
 
     $router->group(['prefix' => 'comments'], function () use ($router) {
@@ -40,6 +40,6 @@ $router->group(['middleware' => 'auth'], function () use ($router) {
         $router->get('/{comment}', 'CommentController@show');
         $router->put('/{comment}', 'CommentController@update');
         $router->post('/{comment}/like', 'CommentController@like');
-        $router->delete('/{comment}', 'CommentController@destroy');
+        $router->get('/delete/{comment}', 'CommentController@destroy');
     });
 });

@@ -81,6 +81,6 @@ class PostService implements PostServiceInterface
      */
     public function delete(int $id): void
     {
-        $this->sendRequest('DELETE', "/posts/{$id}");
+        $this->sendRequest('GET', "/posts/delete/{$id}");
     }
 }
