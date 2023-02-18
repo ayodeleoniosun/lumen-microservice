@@ -2,12 +2,22 @@
 
 namespace App\Providers;
 
-use App\Models\User;
+use App\Models\Post\Post;
+use App\Policies\PostPolicy;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 
 class AuthServiceProvider extends ServiceProvider
 {
+    /**
+     * The policy mappings for the application.
+     *
+     * @var array
+     */
+    protected $policies = [
+        Post::class => PostPolicy::class,
+    ];
+
     /**
      * Register any application services.
      *
@@ -35,5 +45,7 @@ class AuthServiceProvider extends ServiceProvider
                 return User::where('api_token', $request->input('api_token'))->first();
             }
         });
+
+        Gate::policy(Post::class, PostPolicy::class);
     }
 }
