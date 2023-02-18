@@ -3,8 +3,6 @@
 namespace App\Exceptions;
 
 use App\Traits\ApiResponseTrait;
-use Exception;
-use GuzzleHttp\Exception\ClientException;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Auth\AuthenticationException;
 use Illuminate\Database\Eloquent\ModelNotFoundException;
@@ -40,9 +38,9 @@ class Handler extends ExceptionHandler
      * @param Throwable $exception
      * @return void
      *
-     * @throws Exception
+     * @throws \Exception
      */
-    public function report(Throwable $exception): void
+    public function report(Throwable $exception)
     {
         parent::report($exception);
     }
@@ -50,19 +48,25 @@ class Handler extends ExceptionHandler
     /**
      * Render an exception into an HTTP response.
      *
-     * @param Request $request
+     * @param  Request  $request
      * @param Throwable $exception
      * @return Response|JsonResponse
      *
      * @throws Throwable
      */
-    public function render($request, Throwable $exception): Response|JsonResponse
+    public function render($request, Throwable $exception)
     {
         if ($exception instanceof HttpException) {
             $code = $exception->getStatusCode();
             $message = Response::$statusTexts[$code];
 
             return $this->error($message, $code);
+        }
+
+        if ($exception instanceof ModelNotFoundException) {
+            $model = ucfirst(class_basename($exception->getModel()));
+
+            return $this->error($model . ' not found', Response::HTTP_NOT_FOUND);
         }
 
         if ($exception instanceof AuthorizationException) {
@@ -73,11 +77,13 @@ class Handler extends ExceptionHandler
             return $this->error($exception->getMessage(), Response::HTTP_UNAUTHORIZED);
         }
 
-        if ($exception instanceof ClientException) {
-            $response = json_decode($exception->getResponse()->getBody());
-            $code = $exception->getCode();
+        if ($exception instanceof ValidationException) {
+            return $this->error($exception->getMessage(), Response::HTTP_UNPROCESSABLE_ENTITY);
+        }
 
-            return $this->errorMessage($response, $code);
+        //custom exceptions
+        if ($exception instanceof InvalidLoginException) {
+            return $this->error('Invalid login credentials', Response::HTTP_UNAUTHORIZED);
         }
 
         if (env('APP_DEBUG')) {
