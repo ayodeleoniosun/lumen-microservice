@@ -17,7 +17,7 @@ trait ConsumeExternalServiceTrait
         ]);
 
         if (isset($this->secret)) {
-            $headers['Authorization'] = $this->secret;
+            $headers['x-api-key'] = $this->secret;
         }
 
         $response = $client->request($method, $requestUrl, [

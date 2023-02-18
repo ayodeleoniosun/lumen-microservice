@@ -5,6 +5,7 @@ namespace App\Services;
 use App\Contracts\PostServiceInterface;
 use App\Traits\ConsumeExternalServiceTrait;
 use GuzzleHttp\Exception\GuzzleException;
+use Illuminate\Support\Collection;
 
 class PostService implements PostServiceInterface
 {
@@ -15,8 +16,6 @@ class PostService implements PostServiceInterface
     private string $secret;
 
     /**
-     * @param string $baseUrl
-     * @param string $secret
      */
     public function __construct()
     {
@@ -25,15 +24,16 @@ class PostService implements PostServiceInterface
     }
 
     /**
-     * @return string
+     * @return Collection
      * @throws GuzzleException
      */
     public function index(): string
     {
-        return $this->sendRequest('GET', '/posts');
+       return $this->sendRequest('GET', '/posts');
     }
 
     /**
+     * @param array $data
      * @return string
      * @throws GuzzleException
      */
@@ -43,6 +43,7 @@ class PostService implements PostServiceInterface
     }
 
     /**
+     * @param int $post
      * @return string
      * @throws GuzzleException
      */
@@ -52,6 +53,8 @@ class PostService implements PostServiceInterface
     }
 
     /**
+     * @param array $data
+     * @param int $id
      * @return string
      * @throws GuzzleException
      */
@@ -61,6 +64,8 @@ class PostService implements PostServiceInterface
     }
 
     /**
+     * @param array $data
+     * @param int $id
      * @return string
      * @throws GuzzleException
      */
@@ -70,6 +75,7 @@ class PostService implements PostServiceInterface
     }
 
     /**
+     * @param int $id
      * @return void
      * @throws GuzzleException
      */

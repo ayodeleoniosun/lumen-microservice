@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Contracts\PostServiceInterface;
 use App\Http\Requests\PostRequest;
+use App\Http\Resources\Post\PostCollection;
+use App\Http\Resources\Post\PostResource;
 use App\Traits\ApiResponseTrait;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -25,39 +28,33 @@ class PostController extends Controller
 
     /**
      * Return list of posts
-     * @return JsonResponse
+     * @return PostCollection
      */
-    public function index(): JsonResponse
+    public function index(): PostCollection
     {
-        $response = $this->postService->index();
-
-        return $this->success($response);
+        return $this->postService->index();
     }
 
     /**
      * Create new post
      *
      * @param PostRequest $request
-     * @return JsonResponse
+     * @return Model
      */
-    public function store(PostRequest $request): JsonResponse
+    public function store(PostRequest $request): Model
     {
-        $response = $this->postService->create($request->validated());
-
-        return $this->success($response, 'Post successfully created', Response::HTTP_CREATED);
+        return $this->postService->create($request->validated());
     }
 
     /**
      * get and show details of existing post
      *
      * @param int $post
-     * @return JsonResponse
+     * @return PostResource
      */
-    public function show(int $post): JsonResponse
+    public function show(int $post): PostResource
     {
-        $response = $this->postService->show($post);
-
-        return $this->success($response);
+        return $this->postService->show($post);
     }
 
     /**
@@ -65,13 +62,11 @@ class PostController extends Controller
      *
      * @param PostRequest $request
      * @param $post
-     * @return JsonResponse
+     * @return Model
      */
-    public function update(PostRequest $request, $post): JsonResponse
+    public function update(PostRequest $request, $post): Model
     {
-        $response = $this->postService->update($request->validated(), $post);
-
-        return $this->success($response, 'Post successfully updated');
+        return $this->postService->update($request->validated(), $post);
     }
 
     /**
@@ -79,13 +74,11 @@ class PostController extends Controller
      *
      * @param Request $request
      * @param int $post
-     * @return JsonResponse
+     * @return Model
      */
-    public function like(Request $request, int $post): JsonResponse
+    public function like(Request $request, int $post): Model
     {
-        $response = $this->postService->like($request->user_id, $post);
-
-        return $this->success($response, 'Post liked', Response::HTTP_CREATED);
+        return $this->postService->like($request->user_id, $post);
     }
 
     /**
