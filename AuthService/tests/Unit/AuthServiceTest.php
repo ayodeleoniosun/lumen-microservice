@@ -4,7 +4,7 @@ namespace Tests\Unit;
 
 use App\Contracts\OauthServiceInterface;
 use App\Models\User;
-use App\Services\UserService;
+use App\Services\AuthService;
 use Illuminate\Auth\Access\AuthorizationException;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
@@ -14,18 +14,18 @@ use Laravel\Passport\Passport;
 use Tests\TestCase;
 use Tests\Traits\CreateUser;
 
-class UserServiceTest extends TestCase
+class AuthServiceTest extends TestCase
 {
     use CreateUser;
     use DatabaseMigrations;
 
-    public UserService $userService;
+    public AuthService $authService;
 
     public function setup(): void
     {
         parent::setUp();
         $this->oauthService = \Mockery::mock(OauthServiceInterface::class)->makePartial();
-        $this->userService = new UserService($this->oauthService);
+        $this->authService = new AuthService($this->oauthService);
 
         Passport::actingAs(
             User::factory()->create(),
@@ -36,7 +36,7 @@ class UserServiceTest extends TestCase
     public function testCanReturnAllUsers()
     {
         $this->createUser(9);
-        $response = $this->userService->index();
+        $response = $this->authService->index();
 
         $this->assertCount(10, $response);
         $this->assertInstanceOf(Collection::class, $response);
@@ -52,7 +52,7 @@ class UserServiceTest extends TestCase
             'password' => 'strong_password'
         ];
 
-        $response = $this->userService->register($payload);
+        $response = $this->authService->register($payload);
 
         $this->assertInstanceOf(User::class, $response);
         $this->assertEquals($payload['firstname'], $response->firstname);
@@ -64,13 +64,13 @@ class UserServiceTest extends TestCase
     public function testCannotShowInvalidUserDetails()
     {
         $this->expectException(ModelNotFoundException::class);
-        $this->userService->show(2);
+        $this->authService->show(2);
     }
 
     public function testCanShowUserDetails()
     {
         $user = $this->createNewUser();
-        $response = $this->userService->show($user->id);
+        $response = $this->authService->show($user->id);
 
         $this->assertInstanceOf(User::class, $response);
 
@@ -86,7 +86,7 @@ class UserServiceTest extends TestCase
     {
         $payload = $this->newUserPayload();
 
-        return $this->userService->register($payload);
+        return $this->authService->register($payload);
     }
 
     private function newUserPayload(): array
@@ -105,7 +105,7 @@ class UserServiceTest extends TestCase
         $payload = $this->updateUserPayload();
 
         $this->expectException(AuthorizationException::class);
-        $this->userService->update($payload, 3);
+        $this->authService->update($payload, 3);
     }
 
     private function updateUserPayload(): array
@@ -120,7 +120,7 @@ class UserServiceTest extends TestCase
     public function testCanUpdateExistingUser()
     {
         $payload = $this->updateUserPayload();
-        $response = $this->userService->update($payload, auth()->user()->id);
+        $response = $this->authService->update($payload, auth()->user()->id);
 
         $this->assertInstanceOf(User::class, $response);
         $this->assertEquals($payload['firstname'], $response->firstname);

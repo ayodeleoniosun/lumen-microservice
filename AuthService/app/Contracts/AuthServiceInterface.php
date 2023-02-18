@@ -5,7 +5,7 @@ namespace App\Contracts;
 use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\Model;
 
-interface UserServiceInterface
+interface AuthServiceInterface
 {
     public function index(): Collection;
 

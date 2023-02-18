@@ -78,9 +78,9 @@ $app->configure('services');
 //     App\Http\Middleware\AuthenticateAccess::class,
 // ]);
 
- $app->routeMiddleware([
-     'auth' => App\Http\Middleware\Authenticate::class,
- ]);
+$app->routeMiddleware([
+    'auth' => App\Http\Middleware\Authenticate::class,
+]);
 
 /*
 |--------------------------------------------------------------------------
@@ -93,13 +93,13 @@ $app->configure('services');
 |
 */
 
- $app->register(App\Providers\AppServiceProvider::class);
- $app->register(App\Providers\AuthServiceProvider::class);
- $app->register(App\Providers\EventServiceProvider::class);
- $app->register(App\Providers\UserServiceProvider::class);
- $app->register(App\Providers\OauthServiceProvider::class);
- $app->register(Laravel\Passport\PassportServiceProvider::class);
- $app->register(Dusterio\LumenPassport\PassportServiceProvider::class);
+$app->register(App\Providers\AppServiceProvider::class);
+$app->register(App\Providers\AuthServiceProvider::class);
+$app->register(App\Providers\EventServiceProvider::class);
+$app->register(App\Providers\AuthServiceProvider::class);
+$app->register(App\Providers\OauthServiceProvider::class);
+$app->register(Laravel\Passport\PassportServiceProvider::class);
+$app->register(Dusterio\LumenPassport\PassportServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------
@@ -114,10 +114,10 @@ $app->configure('services');
 
 $app->router->group([
     'namespace' => 'App\Http\Controllers',
- ], function ($router) {
+], function ($router) {
     require __DIR__ . '/../routes/web.php';
- });
+});
 
 \Dusterio\LumenPassport\LumenPassport::routes($app, ['prefix' => 'oauth']);
 
- return $app;
+return $app;

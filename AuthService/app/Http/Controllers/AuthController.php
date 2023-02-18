@@ -2,7 +2,7 @@
 
 namespace App\Http\Controllers;
 
-use App\Contracts\UserServiceInterface;
+use App\Contracts\AuthServiceInterface;
 use App\Http\Requests\CreateUserRequest;
 use App\Http\Requests\UpdateUserRequest;
 use App\Traits\ApiResponseTrait;
@@ -10,28 +10,28 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
-class UserController extends Controller
+class AuthController extends Controller
 {
     use ApiResponseTrait;
 
-    protected UserServiceInterface $userService;
+    protected AuthServiceInterface $authService;
 
     /**
-     * @param UserServiceInterface $userService
+     * @param AuthServiceInterface $authService
      */
-    public function __construct(UserServiceInterface $userService)
+    public function __construct(AuthServiceInterface $authService)
     {
-        $this->userService = $userService;
+        $this->authService = $authService;
     }
 
-   /**
+    /**
      * Return list of users
      *
      * @return JsonResponse
      */
     public function index(): JsonResponse
     {
-        $response = $this->userService->index();
+        $response = $this->authService->index();
 
         return $this->success($response);
     }
@@ -44,7 +44,7 @@ class UserController extends Controller
      */
     public function register(CreateUserRequest $request): JsonResponse
     {
-        $response = $this->userService->register($request->validated());
+        $response = $this->authService->register($request->validated());
 
         return $this->success($response, 'Registration successful', Response::HTTP_CREATED);
     }
@@ -57,7 +57,7 @@ class UserController extends Controller
      */
     public function login(Request $request): JsonResponse
     {
-        $response = $this->userService->login($request->all());
+        $response = $this->authService->login($request->all());
 
         return $this->success($response, 'Login successful');
     }
@@ -70,7 +70,7 @@ class UserController extends Controller
      */
     public function show($user): JsonResponse
     {
-        $response = $this->userService->show($user);
+        $response = $this->authService->show($user);
 
         return $this->success($response);
     }
@@ -84,7 +84,7 @@ class UserController extends Controller
      */
     public function update(UpdateUserRequest $request, $user): JsonResponse
     {
-        $response = $this->userService->update($request->validated(), $user);
+        $response = $this->authService->update($request->validated(), $user);
 
         return $this->success($response, 'Profile successfully updated');
     }

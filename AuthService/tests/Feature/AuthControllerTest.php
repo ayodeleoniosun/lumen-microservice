@@ -4,26 +4,15 @@ namespace Tests\Feature;
 
 use App\Models\User;
 use Illuminate\Http\Response;
-use Illuminate\Support\Facades\Hash;
 use Laravel\Lumen\Testing\DatabaseMigrations;
 use Laravel\Passport\Passport;
 use Tests\TestCase;
 use Tests\Traits\CreateUser;
 
-class UserControllerTest extends TestCase
+class AuthControllerTest extends TestCase
 {
     use CreateUser;
     use DatabaseMigrations;
-
-    protected function setup(): void
-    {
-        parent::setUp();
-
-        Passport::actingAs(
-            User::factory()->create(),
-            ['*']
-        );
-    }
 
     public function testShouldReturnAllUsers()
     {
@@ -108,6 +97,19 @@ class UserControllerTest extends TestCase
         $this->assertResponseStatus(Response::HTTP_UNPROCESSABLE_ENTITY);
     }
 
+    private function createNewUserAndReturnData()
+    {
+        $response = $this->post($this->baseUrl . '/register', [
+            'firstname' => 'ayodele',
+            'lastname' => 'oniosun',
+            'gender' => 'male',
+            'email' => 'anything@gmail.com',
+            'password' => '12345'
+        ]);
+
+        return $this->responseData($response);
+    }
+
     public function testShouldCreateNewUser()
     {
         $data = $this->createNewUserAndReturnData();
@@ -164,6 +166,17 @@ class UserControllerTest extends TestCase
         $this->assertResponseStatus(Response::HTTP_FORBIDDEN);
     }
 
+    private function updateUserAndReturnData(int $id)
+    {
+        $response = $this->put($this->baseUrl . "/users/{$id}", [
+            'firstname' => 'updated firstname',
+            'lastname' => 'updated lastname',
+            'gender' => 'female',
+        ]);
+
+        return $this->responseData($response);
+    }
+
     public function testShouldUpdateUser()
     {
         $userResponse = $this->updateUserAndReturnData(1);
@@ -177,28 +190,14 @@ class UserControllerTest extends TestCase
         $this->assertResponseStatus(Response::HTTP_OK);
     }
 
-    private function createNewUserAndReturnData()
+    protected function setup(): void
     {
-        $response = $this->post($this->baseUrl . '/register', [
-            'firstname' => 'ayodele',
-            'lastname' => 'oniosun',
-            'gender' => 'male',
-            'email' => 'anything@gmail.com',
-            'password' => '12345'
-        ]);
+        parent::setUp();
 
-        return $this->responseData($response);
-    }
-
-    private function updateUserAndReturnData(int $id)
-    {
-        $response = $this->put($this->baseUrl . "/users/{$id}", [
-            'firstname' => 'updated firstname',
-            'lastname' => 'updated lastname',
-            'gender' => 'female',
-        ]);
-
-        return $this->responseData($response);
+        Passport::actingAs(
+            User::factory()->create(),
+            ['*']
+        );
     }
 
     protected function tearDown(): void

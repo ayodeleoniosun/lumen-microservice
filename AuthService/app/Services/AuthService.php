@@ -2,8 +2,8 @@
 
 namespace App\Services;
 
+use App\Contracts\AuthServiceInterface;
 use App\Contracts\OauthServiceInterface;
-use App\Contracts\UserServiceInterface;
 use App\Exceptions\InvalidLoginException;
 use App\Models\User;
 use Illuminate\Auth\Access\AuthorizationException;
@@ -13,7 +13,7 @@ use Illuminate\Support\Carbon;
 use Illuminate\Support\Facades\Hash;
 use Throwable;
 
-class UserService implements UserServiceInterface
+class AuthService implements AuthServiceInterface
 {
     public OauthServiceInterface $oauthService;
 
