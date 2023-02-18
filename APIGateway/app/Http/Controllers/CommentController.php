@@ -4,8 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Contracts\PostServiceInterface;
 use App\Contracts\CommentServiceInterface;
-use App\Contracts\AuthServiceInterface;
 use App\Traits\ApiResponseTrait;
+use App\Traits\AuthUserTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
@@ -13,32 +13,29 @@ use Laravel\Lumen\Http\ResponseFactory;
 
 class CommentController extends Controller
 {
-    use ApiResponseTrait;
+    use ApiResponseTrait, AuthUserTrait;
 
     public CommentServiceInterface $commentService;
 
     public PostServiceInterface $postService;
 
-    public AuthServiceInterface $userService;
-
     /**
      * @param CommentServiceInterface $commentService
      * @param PostServiceInterface $postService
-     * @param AuthServiceInterface $userService
      */
-    public function __construct(CommentServiceInterface $commentService, PostServiceInterface $postService, AuthServiceInterface $userService)
+    public function __construct(CommentServiceInterface $commentService, PostServiceInterface $postService)
     {
         $this->commentService = $commentService;
         $this->postService = $postService;
-        $this->userService = $userService;
     }
 
     /**
      * Return list of comments
      *
-     * @return Response|ResponseFactory
+     * @param int $post
+     * @return JsonResponse
      */
-    public function index(int $post): Response|ResponseFactory
+    public function index(int $post): JsonResponse
     {
         return $this->success($this->commentService->index($post));
     }
@@ -47,24 +44,26 @@ class CommentController extends Controller
      * Create new comment
      *
      * @param Request $request
-     * @return Response|ResponseFactory
+     * @return JsonResponse
      */
-    public function store(Request $request): Response|ResponseFactory
+    public function store(Request $request): JsonResponse
     {
-        $this->userService->show($request->user_id);
-
         $this->postService->show($request->post_id);
 
-        return $this->success($this->commentService->store($request->all()));
+        $payload = $this->attachUserToPayload($request);
+
+        $response = $this->commentService->store($payload);
+
+        return $this->success($response, "Comment successfully added", Response::HTTP_CREATED);
     }
 
     /**
      * get and show details of existing comment
      *
      * @param $comment
-     * @return Response|ResponseFactory
+     * @return JsonResponse
      */
-    public function show($comment): Response|ResponseFactory
+    public function show($comment): JsonResponse
     {
         return $this->success($this->commentService->show($comment));
     }
@@ -74,13 +73,15 @@ class CommentController extends Controller
      *
      * @param Request $request
      * @param int $comment
-     * @return Response|ResponseFactory
+     * @return JsonResponse
      */
-    public function like(Request $request, int $comment): Response|ResponseFactory
+    public function like(Request $request, int $comment): JsonResponse
     {
-        $this->userService->show($request->user_id);
+        $payload = $this->attachUserToPayload($request);
 
-        return $this->success($this->commentService->like($request->all(), $comment));
+        $response = $this->commentService->like($payload, $comment);
+
+        return $this->success($response, "Comment liked", Response::HTTP_CREATED);
     }
 
     /**
@@ -88,13 +89,15 @@ class CommentController extends Controller
      *
      * @param Request $request
      * @param $comment
-     * @return Response|ResponseFactory
+     * @return JsonResponse
      */
-    public function update(Request $request, $comment): Response|ResponseFactory
+    public function update(Request $request, $comment): JsonResponse
     {
-        $this->userService->show($request->user_id);
+        $payload = $this->attachUserToPayload($request);
 
-        return $this->success($this->commentService->update($request->all(), $comment));
+        $response = $this->commentService->update($payload, $comment);
+
+        return $this->success($response, "Comment successfully updated");
     }
 
     /**
@@ -103,7 +106,7 @@ class CommentController extends Controller
      * @param $comment
      * @return JsonResponse
      */
-    public function destroy($comment): \Illuminate\Http\JsonResponse
+    public function destroy($comment): JsonResponse
     {
         $this->commentService->delete($comment);
 

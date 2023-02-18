@@ -1,0 +1,98 @@
+<?xml version="1.0"?>
+<ruleset name="PHP_CodeSniffer">
+    <config name="installed_paths" value="vendor/escapestudios/symfony2-coding-standard" />
+    <description>The coding standards</description>
+    <exclude-pattern>*/tests/*</exclude-pattern>
+    <exclude-pattern>*/node_modules/*</exclude-pattern>
+    <exclude-pattern>*.js</exclude-pattern>
+    <exclude-pattern>*.css</exclude-pattern>
+    <file>app</file>
+    <extensions>php</extensions>
+
+    <arg name="basepath" value="."/>
+    <arg name="colors"/>
+    <arg name="parallel" value="75"/>
+    <arg value="np"/>
+
+
+    <rule ref="PSR1" />
+    <rule ref="PSR2" />
+    <rule ref="PSR12" />
+
+    <rule ref="Symfony">
+        <exclude name="Symfony.Commenting.Annotations.Invalid" />
+        <exclude name="Symfony.Commenting.ClassComment.Missing" />
+        <exclude name="Symfony.Commenting.FunctionComment.MissingParamComment" />
+        <exclude name="Symfony.Commenting.FunctionComment.Missing" />
+        <exclude name="Symfony.Commenting.FunctionComment.SpacingAfterParamType" />
+        <exclude name="Symfony.Commenting.FunctionComment.ExtraParamComment" />
+        <exclude name="Symfony.Commenting.FunctionComment.MissingParamTag" />
+        <exclude name="Symfony.Commenting.FunctionComment.MissingParamName" />
+        <exclude name="Symfony.Functions.Arguments.Invalid" />
+        <exclude name="Symfony.Functions.ScopeOrder.Invalid" />
+        <exclude name="Symfony.Formatting.ReturnOrThrow.Invalid" />
+        <exclude name="Squiz.Strings.ConcatenationSpacing.PaddingFound" />
+        <exclude name="Generic.Formatting.SpaceAfterNot.Incorrect" />
+        <exclude name="Generic.Formatting.SpaceAfterNot.Incorrect" />
+        <exclude name="PEAR.Functions.FunctionCallSignature.Indent" />
+    </rule>
+
+
+    <!-- Ban some functions -->
+    <rule ref="Generic.PHP.ForbiddenFunctions">
+        <properties>
+            <property name="forbiddenFunctions" type="array">
+                <element key="sizeof" value="count"/>
+                <element key="delete" value="unset"/>
+                <element key="print" value="null"/>
+                <element key="is_null" value="null"/>
+                <element key="create_function" value="null"/>
+                <element key="echo" value="null"/>
+                <element key="var_dump" value="null"/>
+                <element key="eval" value="null"/>
+            </property>
+        </properties>
+    </rule>
+
+    <!-- Line length MUST be lower than 250 chars  -->
+    <rule ref="Generic.Files.LineLength">
+        <properties>
+            <property name="lineLimit" value="120"/>
+            <property name="absoluteLineLimit" value="250"/>
+            <property name="tab_width" value="4"/>
+        </properties>
+    </rule>
+
+    <!-- Don't hide tokenizer exceptions -->
+    <rule ref="Internal.Tokenizer.Exception">
+        <type>error</type>
+    </rule>
+
+    <!-- Private methods MUST not be prefixed with an underscore -->
+    <rule ref="PSR2.Methods.MethodDeclaration.Underscore">
+        <type>error</type>
+    </rule>
+
+    <!-- Private properties MUST not be prefixed with an underscore -->
+    <rule ref="PSR2.Classes.PropertyDeclaration.Underscore">
+        <type>error</type>
+    </rule>
+
+    <!-- Array MUST be defined with short Array syntax ([]) -->
+    <rule ref="Generic.Arrays.DisallowLongArraySyntax.Found">
+        <type>error</type>
+    </rule>
+
+    <rule ref="Symfony.ControlStructure.IdenticalComparison">
+        <type>error</type>
+    </rule>
+    <rule ref="Symfony.ControlStructure.UnaryOperators">
+        <type>error</type>
+    </rule>
+    <rule ref="Symfony.ControlStructure.YodaConditions">
+        <type>error</type>
+    </rule>
+    <rule ref="Symfony.NamingConventions.ValidClassName">
+        <type>error</type>
+    </rule>
+</ruleset>

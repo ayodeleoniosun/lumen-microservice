@@ -5,13 +5,14 @@ namespace App\Http\Controllers;
 use App\Contracts\PostServiceInterface;
 use App\Contracts\AuthServiceInterface;
 use App\Traits\ApiResponseTrait;
+use App\Traits\AuthUserTrait;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 
 class PostController extends Controller
 {
-    use ApiResponseTrait;
+    use ApiResponseTrait, AuthUserTrait;
 
     public PostServiceInterface $postService;
 
@@ -112,13 +113,5 @@ class PostController extends Controller
         $this->postService->delete($post);
 
         return $this->deleted();
-    }
-
-    protected function attachUserToPayload(Request $request): array {
-        $userId = auth()->user()->id;
-        $payload = $request->all();
-        $payload['user_id'] = $userId;
-
-        return $payload;
     }
 }

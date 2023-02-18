@@ -18,6 +18,6 @@ $router->group(['prefix' => 'posts', 'middleware' => 'api_token.access'], functi
     $router->post('/', 'PostController@store');
     $router->get('/{post}', 'PostController@show');
     $router->put('/{post}', 'PostController@update');
-    $router->get('/delete/{post}', 'PostController@destroy');
     $router->post('/{post}/like', 'PostController@like');
+    $router->get('/delete/{post}', 'PostController@destroy');
 });
