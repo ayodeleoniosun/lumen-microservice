@@ -66,6 +66,6 @@ class CommentService implements CommentServiceInterface
      */
     public function delete(int $id): void
     {
-        $this->sendRequest('DELETE', "/comments/{$id}");
+        $this->sendRequest('GET', "/comments/delete/{$id}");
     }
 }
