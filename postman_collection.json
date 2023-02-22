@@ -1,0 +1,585 @@
+{
+	"info": {
+		"_postman_id": "ecbf8146-4371-42ed-bfd6-3a21e13e7b48",
+		"name": "Microservice",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "18037473"
+	},
+	"item": [
+		{
+			"name": "Users",
+			"item": [
+				{
+					"name": "Register New User",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "pMUUbrAbivtvEKXO8XDIRLXzEZGDjt6c",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstname\": \"ayodele\",\n    \"lastname\": \"oniosun\",\n    \"email\": \"ayodeleoniosun3@gmaillm.commm\",\n    \"gender\": \"male\",\n    \"password\": \"12345\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{apiGatewayBaseUrl}}/register",
+							"host": [
+								"{{apiGatewayBaseUrl}}"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "User Login",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "token",
+								"value": "pMUUbrAbivtvEKXO8XDIRLXzEZGDjt6c",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"ayodeleoniosun63@gmail.com\",\n    \"password\": \"12345\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{apiGatewayBaseUrl}}/login",
+							"host": [
+								"{{apiGatewayBaseUrl}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "All Users",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{apiGatewayBaseUrl}}/users",
+							"host": [
+								"{{apiGatewayBaseUrl}}"
+							],
+							"path": [
+								"users"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Profile",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{apiGatewayBaseUrl}}/users/1",
+							"host": [
+								"{{apiGatewayBaseUrl}}"
+							],
+							"path": [
+								"users",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Profile",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"firstname\": \"ayodele\",\n    \"lastname\": \"oniosun\",\n    \"gender\": \"male\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{apiGatewayBaseUrl}}/users/1",
+							"host": [
+								"{{apiGatewayBaseUrl}}"
+							],
+							"path": [
+								"users",
+								"1"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Posts",
+			"item": [
+				{
+					"name": "All Posts",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "{{apiGatewayBaseUrl}}/posts",
+							"host": [
+								"{{apiGatewayBaseUrl}}"
+							],
+							"path": [
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add New Post",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							},
+							{
+								"key": "x-api-key",
+								"value": "{{postServiceToken}}",
+								"type": "text",
+								"disabled": true
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"this is to go hello\",\n    \"content\": \"https://linkedin.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{apiGatewayBaseUrl}}/posts",
+							"host": [
+								"{{apiGatewayBaseUrl}}"
+							],
+							"path": [
+								"posts"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Like Post",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{apiGatewayBaseUrl}}/posts/3/like",
+							"host": [
+								"{{apiGatewayBaseUrl}}"
+							],
+							"path": [
+								"posts",
+								"3",
+								"like"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Show Post",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{apiGatewayBaseUrl}}/posts/4",
+							"host": [
+								"{{apiGatewayBaseUrl}}"
+							],
+							"path": [
+								"posts",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Post",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"title\": \"this is me ooo\",\n    \"content\": \"https://linkedin.com\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{apiGatewayBaseUrl}}/posts/8",
+							"host": [
+								"{{apiGatewayBaseUrl}}"
+							],
+							"path": [
+								"posts",
+								"8"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Post",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{apiGatewayBaseUrl}}/posts/delete/13",
+							"host": [
+								"{{apiGatewayBaseUrl}}"
+							],
+							"path": [
+								"posts",
+								"delete",
+								"13"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Comments",
+			"item": [
+				{
+					"name": "All Post Comments",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{apiGatewayBaseUrl}}/comments/posts/4",
+							"host": [
+								"{{apiGatewayBaseUrl}}"
+							],
+							"path": [
+								"comments",
+								"posts",
+								"4"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Add New Comment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"post_id\": 4,\n    \"comment\": \"hello world\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{apiGatewayBaseUrl}}/comments",
+							"host": [
+								"{{apiGatewayBaseUrl}}"
+							],
+							"path": [
+								"comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Like Comment",
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization}}",
+								"type": "text"
+							},
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{apiGatewayBaseUrl}}/comments/2/like",
+							"host": [
+								"{{apiGatewayBaseUrl}}"
+							],
+							"path": [
+								"comments",
+								"2",
+								"like"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Show Comment",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{apiGatewayBaseUrl}}/comments/1",
+							"host": [
+								"{{apiGatewayBaseUrl}}"
+							],
+							"path": [
+								"comments",
+								"1"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Update Comment",
+					"request": {
+						"method": "PUT",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization}}",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"comment\": \"hello worldx\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{apiGatewayBaseUrl}}/comments/2",
+							"host": [
+								"{{apiGatewayBaseUrl}}"
+							],
+							"path": [
+								"comments",
+								"2"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Delete Comment",
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "{{authorization}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{apiGatewayBaseUrl}}/comments/delete/3",
+							"host": [
+								"{{apiGatewayBaseUrl}}"
+							],
+							"path": [
+								"comments",
+								"delete",
+								"3"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "postsBaseUrl",
+			"value": "https://postservice.test/posts",
+			"type": "string"
+		},
+		{
+			"key": "commentsBaseUrl",
+			"value": "https://postservice.test/comments",
+			"type": "string"
+		},
+		{
+			"key": "apiGatewayBaseUrl",
+			"value": "https://apigateway.test",
+			"type": "string"
+		},
+		{
+			"key": "authorization",
+			"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIyIiwianRpIjoiYmZjZTAxYTk1NzMxNTljM2JhOGEzNzcyZTEwMzNhZDI0OTBjZjkwMDU4NTBmZjdlNGEzNDNjOTBmYWJlZGI1YTExNjFjZDI3MzNjNDkzMTIiLCJpYXQiOjE2NzcwNzM4ODguMDQ0ODQ5LCJuYmYiOjE2NzcwNzM4ODguMDQ0ODUsImV4cCI6MTcwODYwOTg4OC4wMzc3MDQsInN1YiI6IjEiLCJzY29wZXMiOlsiKiJdfQ.wXOL-6oPMQhXdYZVefeWTMge0NDde_6nSEHvKJsd-r1MXl_pdq8Bed4GtbZg_ioH6cxO1gHFud5fCQ5R2imp9b2SZtQkASM6naGACrvT-NUgKLLP4-Q55XRbn2w1TZxnCr95_QmNJY0Ts8R3NEp-OC1h1BULpzkMnQQcaO0o8EfY9PlDqWWmSF58HofIHV2hVm68eNGascjO1uobW-22ixb4CRq0dJ5CoDJ7ZS9KsMrK4Cf89iJVw6j8MtkMySBOrcSGBUW3jpNM4MPRmsX9La8cC7V_y0BNDOHoLRjMuXo6PNDBKaZFzuhUwJyRMJVTKqWuuiXDNTQmLq0QE91rVaLKy4m0nr2MTqplKxBqUylv_15L4eGU_yjoxjUmQrHB3XfkxfFXgEpv09lviGRKus11LOpumIryF1Q4QGsdfxVDs1-_zlp5n_osgdTDaxc3MuS8f2iDDGbSUa4cRmUwxjbIFH_DnTyy4aZFboQNcRvE0jstj9_X-kCx9eS06rtF6ykNDBA3tgQdDCcxH3dCEOmb2SrQ1GNYEeVbN0nBDXe4TfHPCA23LI_TjeEDjw3HYyCcj5fiEFMy24c2LJ1EEb4lajcs67tnuziTaCfn_QUYlicrh_0pyDJ3P9562OaY-GTvJl9bB9RAgp2ajmxcmfBJpMfsttT-jVJ-i3EEHIM",
+			"type": "string"
+		}
+	]
+}

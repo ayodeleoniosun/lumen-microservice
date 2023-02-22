@@ -14,7 +14,7 @@ trait ApiResponseTrait
         return FacadeResponse::json([
             'status' => 'success',
             'message' => $message,
-            'data' => json_decode($data),
+            'data' => is_string($data) ? json_decode($data) : $data,
         ], $statusCode);
     }
 
