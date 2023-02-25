@@ -25,6 +25,10 @@ The API Gateway uses an Oauth2 token based authentication for the microservices 
 
 Attached below is a pictorial architecture of the application:
 
+## Proposed Architecture
+
+![architecture](microservice-architecture.png)
+
 ### General installation guides
 
 #### Step 1: Clone the repository
