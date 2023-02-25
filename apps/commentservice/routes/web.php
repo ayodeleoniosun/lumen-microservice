@@ -1,6 +1,6 @@
 <?php
 
-/** @var \Laravel\Lumen\Routing\Router $router */
+/** @var Router $router */
 
 /*
 |--------------------------------------------------------------------------
@@ -12,6 +12,17 @@
 | and give it the Closure to call when that URI is requested.
 |
 */
+
+use Laravel\Lumen\Routing\Router;
+
+use Illuminate\Support\Facades\Response;
+
+$router->get('/', function () {
+    return Response::json([
+        'status' => 'success',
+        'message' => 'Welcome to Comment Service',
+    ], 200);
+});
 
 $router->group(['prefix' => 'comments', 'middleware' => 'api_token.access'], function () use ($router) {
     $router->get('/posts/{post}', 'CommentController@index');

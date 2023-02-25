@@ -14,6 +14,14 @@
 */
 
 use Laravel\Lumen\Routing\Router;
+use Illuminate\Support\Facades\Response;
+
+$router->get('/', function () {
+    return Response::json([
+        'status' => 'success',
+        'message' => 'Welcome to API Gateway',
+    ], 200);
+});
 
 $router->post('/register', 'AuthController@register');
 $router->post('/login', 'AuthController@login');

@@ -1,4 +1,4 @@
-# Lumen based microservice based app
+# Sample of a microservice based application architecture
 
 ### Overview of the application
 If you want to ship a new software quickly and you don't have much resources in terms of finance and engineers, monolithic architecture is the way to go.
@@ -11,7 +11,7 @@ This is the problem that microservice architectural style solves.
 
 Microservice architecture is a software architectural style that structure applications as a collection of loosely connected services, making it easier to build and scale applications.
 
-In this repo, I built a prototype of a microservice based application architecture with Laravel Lumen framework which can be cloned and used for your project.
+In this repo, I built a sample of a microservice based application architecture with Laravel Lumen framework which can be cloned and used for your project.
 
 It consists of two services, namely: PostService and CommentService and a API gateway.
 
