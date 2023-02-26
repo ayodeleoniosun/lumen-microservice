@@ -24,7 +24,7 @@ docker-compose exec apigateway_db bash
 
 #### Step 4: Log into the MySQL "microservices" administrative account
 ```
-mysql -u microservices -p
+mysql -u forum_microservice -p
 ```
 and then input `12345` as the password.
 
