@@ -10,6 +10,8 @@ RUN apt-get update && apt-get install -y \
     && docker-php-ext-configure gd --with-freetype --with-jpeg \
     && docker-php-ext-install -j$(nproc) gd
 
+RUN docker-php-ext-install mysqli pdo pdo_mysql
+
 # Set working directory
 WORKDIR /var/www/apigateway
 
@@ -38,7 +40,7 @@ RUN composer update --no-scripts
 RUN composer dump-autoload
 
 # Set /storage /public permission to public
-RUN chmod -R 777 storage/public/
+#RUN chmod -R 777 storage/public/
 
 # Expose port 9000 and start php-fpm server
 EXPOSE 9000
