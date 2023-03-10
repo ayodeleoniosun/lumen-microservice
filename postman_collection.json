@@ -210,20 +210,14 @@
 								"type": "text"
 							},
 							{
-								"key": "Accept",
-								"value": "application/json",
-								"type": "text"
-							},
-							{
 								"key": "x-api-key",
-								"value": "{{postServiceToken}}",
-								"type": "text",
-								"disabled": true
+								"value": "TDkP2eYR7GXkMQCmBE8WIXfNfJtXUQae",
+								"type": "text"
 							}
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"title\": \"this is to go hello\",\n    \"content\": \"https://linkedin.com\"\n}",
+							"raw": "{\n    \"title\": \"this is to g hello\",\n    \"content\": \"https://linkedin.com\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -259,13 +253,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{apiGatewayBaseUrl}}/posts/3/like",
+							"raw": "{{apiGatewayBaseUrl}}/posts/1/like",
 							"host": [
 								"{{apiGatewayBaseUrl}}"
 							],
 							"path": [
 								"posts",
-								"3",
+								"1",
 								"like"
 							]
 						}
@@ -284,13 +278,13 @@
 							}
 						],
 						"url": {
-							"raw": "{{apiGatewayBaseUrl}}/posts/4",
+							"raw": "{{apiGatewayBaseUrl}}/posts/1",
 							"host": [
 								"{{apiGatewayBaseUrl}}"
 							],
 							"path": [
 								"posts",
-								"4"
+								"1"
 							]
 						}
 					},
@@ -317,13 +311,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{apiGatewayBaseUrl}}/posts/8",
+							"raw": "{{apiGatewayBaseUrl}}/posts/1",
 							"host": [
 								"{{apiGatewayBaseUrl}}"
 							],
 							"path": [
 								"posts",
-								"8"
+								"1"
 							]
 						}
 					},
@@ -341,14 +335,14 @@
 							}
 						],
 						"url": {
-							"raw": "{{apiGatewayBaseUrl}}/posts/delete/13",
+							"raw": "{{apiGatewayBaseUrl}}/posts/delete/1",
 							"host": [
 								"{{apiGatewayBaseUrl}}"
 							],
 							"path": [
 								"posts",
 								"delete",
-								"13"
+								"1"
 							]
 						}
 					},
@@ -371,14 +365,14 @@
 							}
 						],
 						"url": {
-							"raw": "{{apiGatewayBaseUrl}}/comments/posts/4",
+							"raw": "{{apiGatewayBaseUrl}}/comments/posts/1",
 							"host": [
 								"{{apiGatewayBaseUrl}}"
 							],
 							"path": [
 								"comments",
 								"posts",
-								"4"
+								"1"
 							]
 						}
 					},
@@ -397,7 +391,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"post_id\": 4,\n    \"comment\": \"hello world\"\n}",
+							"raw": "{\n    \"post_id\": 2,\n    \"comment\": \"Hello world\"\n}",
 							"options": {
 								"raw": {
 									"language": "json"
@@ -442,13 +436,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{apiGatewayBaseUrl}}/comments/2/like",
+							"raw": "{{apiGatewayBaseUrl}}/comments/1/like",
 							"host": [
 								"{{apiGatewayBaseUrl}}"
 							],
 							"path": [
 								"comments",
-								"2",
+								"1",
 								"like"
 							]
 						}
@@ -500,13 +494,13 @@
 							}
 						},
 						"url": {
-							"raw": "{{apiGatewayBaseUrl}}/comments/2",
+							"raw": "{{apiGatewayBaseUrl}}/comments/1",
 							"host": [
 								"{{apiGatewayBaseUrl}}"
 							],
 							"path": [
 								"comments",
-								"2"
+								"1"
 							]
 						}
 					},
@@ -524,14 +518,14 @@
 							}
 						],
 						"url": {
-							"raw": "{{apiGatewayBaseUrl}}/comments/delete/3",
+							"raw": "{{apiGatewayBaseUrl}}/comments/delete/1",
 							"host": [
 								"{{apiGatewayBaseUrl}}"
 							],
 							"path": [
 								"comments",
 								"delete",
-								"3"
+								"1"
 							]
 						}
 					},
@@ -542,8 +536,48 @@
 		{
 			"name": "Oauth token generator",
 			"request": {
-				"method": "GET",
-				"header": []
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "grant_type",
+							"value": "password",
+							"type": "text"
+						},
+						{
+							"key": "client_id",
+							"value": "2",
+							"type": "text"
+						},
+						{
+							"key": "client_secret",
+							"value": "Ln0lbFSbHf6b04QV5HmWq6wwv8SRSnruC2ORbzSy",
+							"type": "text"
+						},
+						{
+							"key": "username",
+							"value": "ayodeleoniosun63@gmail.com",
+							"type": "text"
+						},
+						{
+							"key": "password",
+							"value": "12345",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{apiGatewayBaseUrl}}/oauth/token",
+					"host": [
+						"{{apiGatewayBaseUrl}}"
+					],
+					"path": [
+						"oauth",
+						"token"
+					]
+				}
 			},
 			"response": []
 		}
@@ -572,12 +606,14 @@
 		{
 			"key": "postsBaseUrl",
 			"value": "https://postservice.test/posts",
-			"type": "string"
+			"type": "string",
+			"disabled": true
 		},
 		{
 			"key": "commentsBaseUrl",
 			"value": "https://postservice.test/comments",
-			"type": "string"
+			"type": "string",
+			"disabled": true
 		},
 		{
 			"key": "apiGatewayBaseUrl",
@@ -586,7 +622,7 @@
 		},
 		{
 			"key": "authorization",
-			"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIyIiwianRpIjoiNzBiMzUxOGM4OTgyMTAyYWU4NjNkMTI3YWFlODE0MjRjOTc1ZWQxZGE1NWJkMGY3ZDU3YjhlOWNmMzEyZmI4MjZlYmY5NjUyZGE3YWExNWEiLCJpYXQiOjE2NzczMzIxOTMuMjQxNzM4LCJuYmYiOjE2NzczMzIxOTMuMjQxNzQsImV4cCI6MTcwODg2ODE5My4wMDkzNDUsInN1YiI6IjUxIiwic2NvcGVzIjpbIioiXX0.PJcLzGRAGNgy-EwF14AjHeI1RunRpUQrJW6ZXe84Qv_HK3GgL7jiBNMKiLeC3oMGM2MuWhnRmSusELcHTKywYfmr74chmhRcSZTq7-VdU8NvvqR0_7Fzg0s0gMW6Fb3aTaMRrYIlMKUA-wmVC0FxgZbs0Dk0qxTxGv4OLhV4Q1zAfu5ACYCi3n0jY8Um34A1i5W-R3KuJ6AXtzmnU471RMshr_Y_5EJ3dIeN7938Z9QWY4ShnUBPK54HHassFn03pGUFAjsv-L6tNRIT5YcNcQOD5uSXMBpoOxiwR1qMl_cKFzzOC7VARll5WAPv5euKrZLOrEC6CPY45jo7n9KgKGD-9T0DMqSvEjODUU4iiH0zGTZ-TvEuaBCqQpKpb_fwfPu9pKclX27DUGDOudVBClgzzS7AOnR_YqXCv4NGVhN9xSpit5lUaD-Hc9rL25qAx7cIqlp3HuvSvSp5Xi8Cf5a8CCpdMV1aG4TMjz0qVl44gVPkHPG-wYHaSWWKC2hal7wP4pcnpPXH6tgAoWitf0ivluVduWd7HC7GM03KV8Ko2nfaKNDDYya6fcfxLl4V9DVDBqP9btusAQaENOIUhCd0akZR77eWcr6RzlH3D-BsMf4KinZmkEef6rjHhFnynR-CHai-o3Wj_pWaT63t21lurc59yXfwhhHaV1ROjHQ",
+			"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIyIiwianRpIjoiZjFhMzA1NDcxZWRlMTEzOWEyYTU3MmY3OWE0YmQ4NzQ4ODIzOTQ3ODRmZmM4Y2NmYmVkODNlNzk0NGE3ZTdmNTU1ZmIxODM2MzhlMjRlNWMiLCJpYXQiOjE2Nzg0NTA4NjEuOTQzMjQ1LCJuYmYiOjE2Nzg0NTA4NjEuOTQzMjQ2LCJleHAiOjE3MTAwNzMyNjEuODY4NTY5LCJzdWIiOiI1MSIsInNjb3BlcyI6WyIqIl19.gdtzlxr-toHlVn3Jqp25qH-tuIXhtkxRJG7xdYoWhiZQ7YIpi7dvyu6V5XP8GuSwuo_UpfmvKi8J2f-ZoFW7c-3Ix6QBejUM30RCShEFwexsoerWD4T7c25jv-1F-ES_bVFzdI5_yCoVWkhel3Jlb3g20M7Rb5CHLRfmvxmWS88DPicw8evGjAgt8D_N_B_0kM6sAChWuobtJBLGBJe5d6W0J3BCpG2Tvy-Q6X8Hi-eS9HK_lnjdCejtN-2ouW3rtdFAyxtgMIj3HT_FVp7WyVuo0CwOyX5tecelALeHzJZhF16XNR6CHIoXKdixNKAdhkoGRW20qKjGHC4V50YNRCrWVCzC3ucFDjfyieMlHMCWG0BXUDQLpwRbiz7OTcRF12dvCDbJs0UJ_sY5uh2UXspppWhQT9lde8tLkymZNo1hojhls8UsXPurs5nzdYeQlusoyq2EfoX9u26QxPFJSmRACEieNN_jYCznKEVoQJ72khBlDNsLjmqz8zTUoq9-DQMq4MGlWfMWohpJupnJvC4ZtY3gkC-1hYgKui2caHAcupToVd420OevzRpQUTsaPgmQy8LVHi2zkTQCiLJi0ydvsJG11jpXarlscU-SlYBy8m2c5T-J0eEBUlrQ1R4P5q-1s33JUJazcKhKieb7ttVqQRXpsMpFKoc9ISfYuw0",
 			"type": "string"
 		}
 	]
