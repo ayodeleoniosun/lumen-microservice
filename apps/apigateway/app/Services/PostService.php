@@ -29,7 +29,7 @@ class PostService implements PostServiceInterface
      */
     public function index(): string
     {
-       return $this->sendRequest('GET', '/posts');
+        return $this->sendRequest('GET', '/posts');
     }
 
     /**
