@@ -604,25 +604,13 @@
 	],
 	"variable": [
 		{
-			"key": "postsBaseUrl",
-			"value": "https://postservice.test/posts",
-			"type": "string",
-			"disabled": true
-		},
-		{
-			"key": "commentsBaseUrl",
-			"value": "https://postservice.test/comments",
-			"type": "string",
-			"disabled": true
-		},
-		{
 			"key": "apiGatewayBaseUrl",
 			"value": "http://localhost:9000",
 			"type": "string"
 		},
 		{
 			"key": "authorization",
-			"value": "Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJSUzI1NiJ9.eyJhdWQiOiIyIiwianRpIjoiNmUxOGYwMWFmNjEzZDlhODQ0ODNjOTE4NDUzNDBkYmFlMjMwYjYyZmU3Yzk1NWE0ZTIyZmE5N2E1OWU4N2IwYjI1ZTRjODdmYzllZmNiMjAiLCJpYXQiOjE2Nzg0NzI0MzYuMTU1MjIxLCJuYmYiOjE2Nzg0NzI0MzYuMTU1MjIzLCJleHAiOjE3MTAwOTQ4MzYuMDg4MTk1LCJzdWIiOiI1MSIsInNjb3BlcyI6WyIqIl19.UOpkBSKLz9Mbt_hHmFuL465UduSt9GOzAjM0o_xGiQGC9j2SorhwBLBzGgHOzPr7CHwTaaIU6BQOst_TE_bwPCQEWevbghn8C-7fws0RjbRm4OIEAaX6kai8XT7fch56r57xPXrmUXmt2NfujMQWWWz64ZF8Vzh5Gj9JXZ3XfPX9NLAhnAE1kgp46GXlSdbbPyTfMri4Q_5Ezi8tmgDk-9NTRdRxiKhPLxcV1kiMEPvgh4Xwzu1XcsXQlEebFST62HvJwbvaF0er7Va8LGZ64240CrTgZ6C3cDUWcB5_d2dUFpqH9AzUUV8qUTNmmOkutWA98Ifvgym-vUmNYhHcfe7wUU-CFtdUgw98d7hUpE-nZBaDJ9dnjjRuBX-63v3IGwtpTGRYmtWsCD4Ct7tTN3JCabnTeyRx30sGiVm39rpIaYqXp2Vkzej_eWgwaa-sf0MX_N9x79mZ5MHfgsPwYy4gVHuuFdTjXh5Ycm4fo282GBrnlJn87Q3gnzNk7kHrK8AFMfMff_0ir5_gY0JbGgtPFs8-D-K71DsUxh6r7DJEjNjDiIOeX5nU58-W79VOAzo_-NX-bi4Md93xKZcXwGnlLXgtrcJkzu-Viip4o8aVoHiMmq_uxtXbendliSDIoPHq1dnko1-Wyfzp7yEpY7zPGT1IeEhYj2SXqpCFbyI",
+			"value": "Bearer your-token-goes-here",
 			"type": "string"
 		}
 	]
