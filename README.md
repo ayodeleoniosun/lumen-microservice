@@ -96,7 +96,7 @@ to generate the secrets.
 
 However, ensure that the length of the string is `32` and separate strings are generated for `apigateway`, `postservice` and `commentservice`
 
-After generating the random strings, ensure you update the `POST_SERVICE_SECRET` and the `COMMENT_SERVICE_SECRET` in the `.env` of the `apigateway`  and also the `.env` for Post and Comment Service.
+After generating the random strings, you can update the `POST_SERVICE_SECRET` and the `COMMENT_SERVICE_SECRET` in the `.env` of the `apigateway`  and also the `.env` for Post and Comment Service.
 
 #### Step 10: Generate a new application key
 Repeat the same process to generate application key and update the `APP_KEY` in the `.env` file of `apigateway`, `postservice` and `commentservice` with each generated strings.
