@@ -17,6 +17,7 @@
         "fakerphp/faker": "^1.9.1",
         "mockery/mockery": "^1.4.4",
         "phpunit/phpunit": "^9.5.10",
+        "friendsofphp/php-cs-fixer": "^3.14",
         "escapestudios/symfony2-coding-standard": "^3.12",
         "enlightn/security-checker": "^1.10",
         "phpmd/phpmd": "^2.12",
