@@ -34,4 +34,4 @@ jobs:
           DB_DATABASE: database/database.sqlite
         run: |
           cd apps/apigateway
-          vendor/bin/phpunit --parallel
+          vendor/bin/phpunit
