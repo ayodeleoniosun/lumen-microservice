@@ -28,6 +28,11 @@ jobs:
           mkdir -p database
           touch database/database.sqlite
 
+      - name: Execute style fixes
+        run: |
+          cd apps/apigateway
+          PHP_CS_FIXER_IGNORE_ENV=1  vendor/bin/php-cs-fixer fix ./
+
       - name: Executed tests
         env:
           DB_CONNECTION: sqlite
