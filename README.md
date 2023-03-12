@@ -33,13 +33,13 @@ Attached below is a pictorial architecture of the application:
 
 #### Step 1: Clone the repository
 
-```bash
+```shell
 git clone https://github.com/ayodeleoniosun/lumen-microservice.git
 ```
 
 #### Step 2: Switch to the repo folder
 
-```bash
+```shell
 cd lumen-microservice
 ```
 
@@ -49,33 +49,40 @@ cd lumen-microservice
 
 #### Step 4: Navigate to each service (including apigateway) and run 
 
-```bash
+```shell
 composer install
 ```
 
 #### Step 5: Navigate back to the root directory and build the docker images
 
-```bash
+```shell
 cd ../../
+```
+
+```shell
 docker-compose build --no-cache
 ```
 #### Step 6: Spring up a docker container in detached mode
 
-```bash
+```shell
 docker-compose up -d --force-recreate
 ```
 
 #### Step 7: Run database migrations alongside the seeders
 
-```bash
+```shell
 docker-compose exec apigateway php artisan migrate:fresh --seed
+```
+```shell
 docker-compose exec postservice php artisan migrate:fresh --seed
+```
+```shell
 docker-compose exec commentservice php artisan migrate:fresh --seed
 ```
 
 #### Step 8: Generate Oauth Secret
 
-```bash
+```shell
 docker-compose exec apigateway php artisan passport:install
 ```  
 
@@ -97,9 +104,13 @@ Repeat the same process to generate application key and update the `APP_KEY` in 
 #### Step 11: Testing
 Run the following command to run tests:
 
-```bash
+```shell
 docker-compose exec apigateway ./vendor/bin/phpunit
+```
+```shell
 docker-compose exec postservice ./vendor/bin/phpunit
+```
+```shell
 docker-compose exec commentservice ./vendor/bin/phpunit
 ```
 
