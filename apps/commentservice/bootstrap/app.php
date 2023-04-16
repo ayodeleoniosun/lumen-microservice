@@ -48,6 +48,8 @@ $app->singleton(
     App\Console\Kernel::class
 );
 
+$app->register(\Nord\Lumen\Cors\CorsServiceProvider::class);
+
 /*
 |--------------------------------------------------------------------------
 | Register Config Files
@@ -61,6 +63,7 @@ $app->singleton(
 
 $app->configure('app');
 $app->configure('services');
+$app->configure('cors');
 
 /*
 |--------------------------------------------------------------------------
@@ -80,6 +83,10 @@ $app->configure('services');
  $app->routeMiddleware([
      'api_token.access' => \App\Http\Middleware\ApiToken::class
  ]);
+
+$app->middleware([
+    \Nord\Lumen\Cors\CorsMiddleware::class
+]);
 
 /*
 |--------------------------------------------------------------------------

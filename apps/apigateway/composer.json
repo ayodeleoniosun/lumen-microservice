@@ -13,7 +13,8 @@
         "dusterio/lumen-passport": "^0.3.6",
         "guzzlehttp/guzzle": "^7.4",
         "laravel/lumen-framework": "^9.0",
-        "laravel/passport": "^10.4"
+        "laravel/passport": "^10.4",
+        "nordsoftware/lumen-cors": "^3.5"
     },
     "require-dev": {
         "enlightn/security-checker": "^1.10",
